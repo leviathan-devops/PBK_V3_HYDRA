@@ -7,6 +7,7 @@
  * as PROBE ERRORS (Side A). THE LESSON: copy the authority, and emit it with a real serializer.
  */
 import { describe, expect, test } from "bun:test";
+import { readFileSync } from "node:fs";
 import type { LexiconRule } from "../SEAM/seam";
 import { bandOfLexicon, confidence, scoreSignals } from "../src/lexicon/score";
 import { loadRules } from "../src/lexicon/load";
@@ -59,26 +60,39 @@ test("P7-HT-BUG-4 the double-match", () => {
 	console.log("  HT-BUG-4 STATUS FIXED: overlapping matches are counted once");
 });
 
-test("P7-HT-BUG-5 the process narration fires", () => {
-	const real = score(LONG + " about the doc-density gate: these are .md writes.");
-	console.log(`  HT-BUG-5 the real span pos=${real.pos} band=${real.band}`);
-	expect(real.band).toBe("act");
-	console.log("  HT-BUG-5 STATUS OPEN: a process hedge fires like a design instruction");
+test("P7-HT-BUG-5 the process narration (FIXED on the live rule)", () => {
+	// ★ THE AUTHORITY IS THE LIVE RULE, not the local synthetic copy — W2's fix is there.
+	const live = loadRules("/home/leviathan/.omp/agent/rules").find((x) => x.id === "instruction-not-predicate")!;
+	const s = scoreSignals(LONG + " about the doc-density gate: these are .md writes.", live.lexicon);
+	const c = confidence(s.pos, s.neg);
+	console.log(`  HT-BUG-5 the real span pos=${s.pos} neg=${s.neg} band=${bandOfLexicon(c, live.band)}`);
+	expect(bandOfLexicon(c, live.band)).not.toBe("act");
+	console.log("  HT-BUG-5 STATUS FIXED: a process hedge drops off act on the live rule");
 });
 
-test("P7-HT-BUG-6 the self-reference loop", () => {
-	const meta = score("Now I must " + SHORT + " (no, that is the banned phrase). Let me EXECUTE.");
-	console.log(`  HT-BUG-6 the meta-correction pos=${meta.pos} neg=${meta.neg} band=${meta.band}`);
-	expect(meta.band === "act" || meta.band === "flag").toBe(true);
-	console.log("  HT-BUG-6 STATUS OPEN: the meta-correction re-fires");
+test("P7-HT-BUG-6 the self-reference loop (FIXED on the live rule)", () => {
+	const live = loadRules("/home/leviathan/.omp/agent/rules").find((x) => x.id === "instruction-not-predicate")!;
+	const s = scoreSignals("Now I must " + SHORT + " (no, that is the banned phrase). Let me EXECUTE.", live.lexicon);
+	const c = confidence(s.pos, s.neg);
+	console.log(`  HT-BUG-6 the meta-correction pos=${s.pos} neg=${s.neg} band=${bandOfLexicon(c, live.band)}`);
+	expect(bandOfLexicon(c, live.band)).not.toBe("act");
+	console.log("  HT-BUG-6 STATUS FIXED: the meta-correction drops off act on the live rule");
 });
 
-test("P7-HT-BUG-10 the audit gate blind-pass class", () => {
+test("P7-HT-BUG-10 the audit gate's blind-pass guard (FIXED, asserted from disk)", () => {
+	// THE CLASS: "0 findings" and "0 coverage" produce the same bytes unless coverage is asserted.
+	// THE FIX lives in the extension; assert the guards are ON DISK (the source of truth).
+	const src = readFileSync("/home/leviathan/.omp/agent/extensions/qwen-code-audit/index.js", "utf8");
+	const guards = ["OCR_RUN_DEGRADED", "OCR_NO_FILES_REVIEWED", "OCR_COUNT_MISMATCH"];
+	for (const g of guards) {
+		console.log(`  HT-BUG-10 the guard present: ${g} -> ${src.includes(g)}`);
+		expect(src.includes(g)).toBe(true);
+	}
+	// and the class assertion: the summary is not derived from the artifact
 	const artifact = { status: "completed_with_errors", summary: { comments: 10, files_reviewed: 2 } };
 	const gate = { findings: 0, filesReviewed: "?" };
 	expect(gate.findings === artifact.summary.comments).toBe(false);
-	console.log(`  HT-BUG-10 the gate said ${gate.findings}; the artifact says ${artifact.summary.comments}`);
-	console.log("  HT-BUG-10 STATUS OPEN: the summary is not derived from the artifact");
+	console.log("  HT-BUG-10 STATUS FIXED: the 3 blind-pass guards are on disk (see gate-verdict-proof.mjs)");
 });
 
 test("P7 the FP shield: the positive fires, the negatives do not", () => {

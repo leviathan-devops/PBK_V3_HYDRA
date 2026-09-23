@@ -56,3 +56,19 @@ export function boot(pi: any, opts: { rulesDir: string; logger?: EntryDeps["logg
 	const check = engineFromRulesDir(opts.rulesDir);
 	install(pi, { check, logger: opts.logger });
 }
+
+/**
+ * ★ THE DEFAULT EXPORT — THE DEPLOY CONTRACT (HT-BUG-15, found 2026-09-23).
+ *
+ * omp loads an extension by importing its file and CALLING THE DEFAULT EXPORT with `pi`. The live
+ * extension carries `export default function (pi) { ... }` (lexicon-gate/index.ts:39). THIS TREE
+ * had named exports ONLY — so a deploy would have loaded NOTHING, silently. The entry is
+ * mechanically required; without it the extension registers zero hooks.
+ *
+ * The rules dir resolves from the env (PBK_RULES_DIR) or the live default.
+ */
+const DEFAULT_RULES_DIR = process.env.PBK_RULES_DIR ?? `${process.env.HOME}/.omp/agent/rules`;
+
+export default function pbk_v3(pi: any): void {
+	boot(pi, { rulesDir: DEFAULT_RULES_DIR, logger: pi?.logger });
+}
