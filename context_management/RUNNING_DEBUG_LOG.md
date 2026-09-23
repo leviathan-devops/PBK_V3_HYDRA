@@ -369,3 +369,22 @@ Append-only. Every debug event lands HERE the moment it is understood. Never edi
   the same: choose phrasing that does not carry a rule's trigger shape.
 - EVIDENCE: the block notice on the first send; `Delivered to 1 peer(s): W2Surfaces: injected`
   on the second.
+
+
+## [2026-09-23T11:56:00+04:00] — AN EARLY `git add -A` CARRIED A PARTIAL MERGE INTO A COMMIT
+
+- SYMPTOM: after the first merge attempt, `git status` showed 30 files including `UU .gitignore`
+  and `UU tsconfig.json` under a commit whose message read "chore(master): the merge-gate
+  role-awareness fix". The working tree looked like a mid-merge violation.
+- ROOT CAUSE: a `git add -A` ran while a merge was in progress (the merge had stopped on the
+  gitlink conflict earlier, and a later `git add -A` staged the half-merged tree). The commit it
+  produced (335c22c) was actually the ENGINE's merge — `git show --stat` confirms
+  `Merge: 2299086 926c910`. So the MERGE SUCCEEDED; only the MESSAGE was wrong.
+- FIX: verified via `git show --stat 335c22c | head -2` (the `Merge:` line proves it), then
+  resolved the surfaces merge's 5 conflicts properly and committed with the correct message.
+  No history rewrite was needed — the tree was correct.
+- LESSON: **`git add -A` during a merge stages the conflict state.** Read `git show --stat <sha>`
+  for the `Merge:` line before concluding a merge failed — the message can lie while the tree
+  is right. Never `add -A` mid-merge; resolve, then add the specific paths.
+- EVIDENCE: `git show --stat 335c22c` -> `Merge: 2299086 926c910`; the final merge commit
+  35aae25 with the combined tree green.

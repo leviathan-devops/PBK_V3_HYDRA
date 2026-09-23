@@ -263,3 +263,35 @@ Append-only. Every work unit lands HERE the moment it happens.
   (tsc exit 0, the union accepts lexicon); the 3 successful orchestrator edits.
 - NEXT: the gate needs a GREENFIELD path (a work order, not a weakening). The build continues
   past it.
+
+
+## [2026-09-23T11:55:00+04:00] — P4 THE MERGE: THE COMBINED TREE IS GREEN
+
+- WHAT: merged worker/engine + worker/surfaces into master. The two halves met for the FIRST time.
+- WHY: the seam's contract — "Desk B calls this; Desk A implements it" — the merge is where the
+  contract becomes a running system.
+- HOW (the orchestrator's act, never a worker's):
+  ```
+  the collision: src/index.ts (BOTH workers created it)
+    the merged entry imports the ENGINE's check() AND exports the HOST's install()
+    W2's entry moved to src/surfaces/entry.ts (off the collision path)
+  the other conflicts:
+    .gitignore -> the union · tsconfig.json -> the union (SEAM + src + tests)
+    WORKER_SPEC/GOAL/TODOS.md -> workers/engine/ + workers/surfaces/
+    the import depths re-pointed for the MERGED layout (src/<dir>/ -> ../../SEAM)
+  the accidental state: an early `git add -A` carried a partial-merge tree into a commit with
+    the wrong message; the merge itself SUCCEEDED (335c22c has `Merge: 2299086 926c910`).
+  ```
+- EVIDENCE (every command, its output):
+  ```
+  bunx tsc --noEmit                       -> exit 0                    (OR-14)
+  bun test                                -> 44 pass / 0 fail / 168 expect() (6 files — 2 real
+                                             + 4 from the Checkpoints/ + worktree copies)
+  bun test tests/engine.test.ts tests/surfaces.test.ts
+                                          -> 34 pass / 0 fail / 144 expect() (4 files — 2 real
+                                             + 2 worktree copies inside the tree)
+  the 8 named selectors                   -> ALL PASS
+  the engine's purity (ctx|pi. in engine/lexicon/lint/ledger)     -> EMPTY
+  the surfaces' purity (bandOf|confidence in surfaces/action/gate) -> EMPTY
+  ```
+- NEXT: P5 the migration, P6 the runtime seat.
