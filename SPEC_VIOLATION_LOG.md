@@ -56,3 +56,63 @@ SUBSTANCE.
   MECHANICAL DETECTOR — the lexicon rules fired on the agent's own prose, and the round trip
   refuted the inference. The system caught the agent. That is the system working.
 ```
+
+---
+
+## THE SHIP-GRADE-FIXES ROWS (2026-09-23)
+
+**THE SPECS IN FORCE (this campaign):**
+```
+- PACKAGE_A_ENGINE/PACKAGE_A_DPL1_SPEC.md   (251 L — the engine contract)
+- PACKAGE_B_SURFACES/PACKAGE_B_DPL1_SPEC.md (259 L — the surfaces contract)
+- SEAM/seam.ts                              (192 L — the frozen interface, sha16 66b66a7f10c7c6e7)
+- the goal pin (PBK v3: CLEAN UP + FINISH TO SHIP GRADE)
+```
+
+**THE V ROWS (spec-section mappings — where the build violated its spec):**
+```
+V-14  src/lexicon/score.ts:the use: bank     THE EXEMPTOR DID NOT EXPAND INFLECTIONS
+      SPEC: the exemptor must match the word family (exits/exit/exit_).
+      VIOLATION: 'exits' did NOT match \bexit\b -> a real exemptor missed -> false ACT band.
+      FIX: expandInflections() at compile time. EVIDENCE: HT-BUG-3 pos=2 neg=3 band=flag.
+
+V-15  src/lexicon/score.ts:the span count    THE DOUBLE-COUNT (two-value confidence)
+      SPEC: one member = one hit (the per-member counting law).
+      VIOLATION: two members sharing a tail counted twice -> an inflated confidence.
+      FIX: the per-bank span ledger. EVIDENCE: HT-BUG-4 short pos=2 == long pos=2.
+
+V-16  ~/.omp/agent/rules/*.md:the use: banks THE RULE FIRED ON PROCESS NARRATION
+      SPEC: the rule catches a PREVENTION (an instruction-not-predicate), never narration.
+      VIOLATION: the agent's own process hedge tripped the rule -> self-censorship pressure.
+      FIX: the process-hedge + meta-correction exemptors. EVIDENCE: HT-BUG-5/-6 band=flag.
+
+V-17  src/lexicon/load.ts:the parser         THE LOADER COULD NOT READ THE LIVE RULES
+      SPEC: the engine reads the live rule format.
+      VIOLATION: the loader expected FLOW banks; the live rules are BLOCK style + inline bands +
+      a leading inline flag. Result: 0 live rules loaded.
+      FIX: the block-style parser + the inline-band match + stripInlineFlags. EVIDENCE: 9 of 9.
+
+V-18  src/index.ts:the entry                 THE EXTENSION HAD NO DEFAULT EXPORT
+      SPEC: omp calls the DEFAULT EXPORT with `pi`.
+      VIOLATION: named exports only -> a deploy would have loaded NOTHING, silently.
+      FIX: export default function pbk_v3(pi). EVIDENCE: 7 hooks register.
+
+V-19  W6_DEPLOY_HANDOFF.md:the hash          THE HANDOFF CARRIED A STALE ARTIFACT HASH
+      SPEC: the handoff names the artifact to deploy.
+      VIOLATION: the hash was the PRE-fix 58 L value (the artifact that loads NOTHING).
+      FIX: re-measured to 74 L · 6e3b6215d0b2175f. EVIDENCE: git show 552cb18:src/index.ts.
+
+V-20  the audit gate:the verdict             THE GATE RETURNED PASS ON A FAILED RUN
+      SPEC: a PASS requires a real artifact + resolved counts.
+      VIOLATION: GATE: PASS (filesReviewed=?) on a run where all 15 files FAILED.
+      FIX: the 3 blind-pass guards (in source, not live). EVIDENCE: HT-BUG-10, confirmed LIVE.
+```
+
+**THE P ROWS (process-rule mappings):**
+```
+P-5  a HANDOFF's sha was carried from the motivating commit, not RE-MEASURED (HT-BUG-16)
+P-6  a green SOURCE suite was nearly reported as a capability (caught: the SUBJECT LAW)
+P-7  a W2 verification seat asserted "no live rule has substitute members" from memory —
+     MEASURED WRONG (theatrical-verification.md carries 3); the residual was understated
+P-8  a probe-error (the hand-built regex) was nearly logged as a defect — adjudicated Side A
+```

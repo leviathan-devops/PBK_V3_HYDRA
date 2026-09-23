@@ -195,3 +195,79 @@ the extension's suite      5 pass / 0 fail / 12 expect() (source scope)
 the harnesses              REMOVED (no residue)
 the rules                  9 (the probe removed; the threshold restored)
 ```
+
+---
+
+## 2026-09-23 — THE SHIP-GRADE FIXES (the 8-bug campaign)
+
+### THE BUILT
+
+```
+THE SCORER (W1) — src/lexicon/score.ts +65/-5
+  expandInflections()        expands the use: bank at compile time (the alternation group + the
+                             bare-word case) -> 'exits' matches \bexit\b
+  the per-bank span ledger   two members sharing a tail count ONCE (the double-count killed)
+
+THE LIVE RULES (W2) — ~/.omp/agent/rules/instruction-not-predicate.md +2 use: members
+  the meta-correction        a phrase inside a self-correction
+  the process-hedge          a hedge about the agent's own process
+
+THE LOADER (HT-BUG-14) — src/lexicon/load.ts +55/-8
+  the block-style bank parser + the inline-band match + stripInlineFlags
+  (ported from the live extension's lib.ts:59, case-insensitive compile)
+  PROOF: loadRules(~/.omp/agent/rules) -> 9 of 9 rules load
+
+THE DEPLOY CONTRACT (HT-BUG-15) — src/index.ts (58 L -> 74 L)
+  export default function pbk_v3(pi)   — omp calls the DEFAULT EXPORT; without it the extension
+  registers ZERO hooks. PROVEN: typeof default === "function", and calling it registers 7 hooks.
+
+THE BLIND-PASS GUARDS (HT-BUG-10) — 3 guards (OCR_RUN_DEGRADED, OCR_NO_FILES_REVIEWED,
+  OCR_COUNT_MISMATCH) — in SOURCE, not live.
+```
+
+### THE WHY
+
+The goal: take PBK v3 to SHIP GRADE. The 5 OPEN bugs + the audit gate's false PASS + the tree
+never deployed. Each fix answers a MEASURED defect, not a hypothesis.
+
+### THE HOW
+
+1. The bugs were found by a HOST-LIVE meta-observation round (the agent's own prose tripped the
+   rules; the firings were the data).
+2. W1 + W2 were dispatched in ONE batch (disjoint files: the scorer vs the live rules).
+3. Both workers were INFRA-CUT at ~4min (zero file changes) — the orchestrator (Main) executed
+   the fixes directly at f93e34a, then dispatched a verification seat (W1Scorer).
+4. HT-BUG-14 was found WHILE proving W2 (the loader could not read the live rules at all).
+5. HT-BUG-15 was found while writing the deploy handoff (the entry had no default export).
+6. HT-BUG-16 was found while RE-MEASURING the handoff (the hash was the pre-fix 58 L value).
+
+### THE EVIDENCE
+
+```
+bunx tsc --noEmit                               exit 0
+bun test (engine, surfaces, adversarial)        24 pass / 0 fail / 101 expects
+  HT-BUG-3 inflected                            pos=2 neg=3 c=0.333 band=flag
+  HT-BUG-4 short / long                         pos=2 / pos=2 (no double-count)
+  HT-BUG-5 the process hedge                    pos=2 neg=3 band=flag
+  HT-BUG-6 the meta-correction                  pos=2 neg=3 band=flag
+  the sacred overlap                            pos=0 neg=4 c=0.000 band=clear (PRESERVED)
+  HT-BUG-10 the 3 guards                        present on disk
+the default export                              7 hooks register (session_start, input,
+                                                message_update, tool_call, tool_result,
+                                                ttsr_triggered, agent_end)
+the rules load                                  9 of 9
+the live ledger                                 685 rows (the gate firing on the session)
+the checkpoint                                  Checkpoints/pbk-v3-ship-grade-fixes
+                                                dist sha16 6e3b6215d0b2175f · 8/8 self-check
+```
+
+### THE HONEST REMAINDER
+
+```
+- the new tree has NEVER RUN (L0/L1 SOURCE proof only; the deploy is the operator's act).
+- the audit gate is BLOCKED: the ocr provider chain is quota-dead (429 on every lane), and the
+  tool returned GATE: PASS on a run where all 15 files FAILED (HT-BUG-10, confirmed LIVE).
+- HT-BUG-7 (the Jev 402) + HT-BUG-13 (the GI graph gate) are BLOCKED — both outside this tree.
+- W2_FIX_REPORT.md (the independent W2 verification seat) is in flight; the W2 fixes ARE covered
+  by tests/adversarial.test.ts (P7-HT-BUG-5, P7-HT-BUG-6 read the LIVE rule; 5 pass / 0 fail).
+```
