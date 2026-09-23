@@ -274,3 +274,50 @@ bun test ./tests/                   -> 24 pass / 0 fail / 98 expect() / Ran 24 t
   substring-pattern matching (it counted the Checkpoints + worktree COPIES).
 - **THE SELECTORS (all PASS):** lexicon_sweep (F1=1.000) · lint_runner · lexicon_load_throws ·
   source_kind_gate · quote_state · abort_dedupe · action_map · delta_accumulator · rule_precision.
+
+---
+
+## THE AUDIT GATE — DEFINITIVE MEASUREMENT (2026-09-23T15:25+04:00)
+
+**RAN, IN ORDER, EACH MEASURED:**
+
+```
+1. qwen-code-audit action=health
+   -> "✓ Connection test successful"  (the free lane answers a SINGLE call)
+2. qwen-code-audit action=scan scanPath=src,SEAM
+   -> GATE: PASS (0 critical/high)  scope=workspace  filesReviewed=?  findings=0
+   ★ filesReviewed=? UNRESOLVED + NO ARTIFACT  = HT-BUG-10's blind-pass shape
+3. ocr scan --preview --path src
+   -> "Preview: 15 file(s) changed | +949 -0"  (the SCOPE works with --path)
+4. ocr scan --path src --format json
+   -> 15 files walked · 31 llm_requests · 29 llm_errors (429) · 2 llm_responses
+      "Error: scan failed: all 15 file scan(s) failed"
+   ★ THE SCAN RAN, WALKED THE RIGHT FILES, AND FAILED ON THE RATE LIMIT
+5. ocr scan --provider poolside-laguna-s  (a PAID lane)
+   -> "429 Too Many Requests: usage limit exceeded"  (the paid lane is ALSO blocked)
+6. the lane matrix: muse-free · muse-go · muse-go-mimo · openrouter-laguna-xs-free
+   -> ALL "error"  (the provider chain is quota-dead)
+```
+
+**THE VERDICT: `AUDIT GATE: BLOCKED`**
+```
+- the ocr provider chain is quota-dead: every configured lane 429s.
+- the scan runs, walks the correct files (15 src/), and FAILS: 29 of 31 calls 429'd.
+- NO ARTIFACT is written (the required .omp/container-test-results.json-equivalent is absent).
+- ★ HT-BUG-10 IS CONFIRMED LIVE: the tool returned GATE: PASS (filesReviewed=?) ON A RUN WHERE
+  ALL 15 FILES FAILED. The gate's source fix (3 blind-pass guards) exists; the DEPLOYED tool
+  still blind-passes. THE FIX IS IN SOURCE, NOT LIVE.
+- THE RESUME CONDITION: a fresh scan when the lane recovers, OR a non-rate-limited lane
+  (a provider key with accumulated limits). NEVER upgraded to PASS on a failed run.
+```
+
+**THE TWO-SIDED ADJUDICATION:**
+```
+Side A (was the probe wrong?): NO. The scope, the path, the tool, the provider — all correct.
+  The 429 is an EXTERNAL rate limit, named verbatim by the provider.
+Side B (a real contract violation?): YES, TWO:
+  B-1: the audit gate returns PASS on a run where every file failed (HT-BUG-10, live).
+  B-2: the provider chain has no non-rate-limited fallback for the audit gate.
+★ BOTH ARE CONFIRMED Side-B defects, recorded. Neither is a probe error.
+```
+
