@@ -582,3 +582,31 @@ Append-only. Every debug event lands HERE the moment it is understood. Never edi
   against the handoff's claim.
 - THE LESSON: a handoff's sha must be RE-MEASURED at the moment of writing, not carried from
   the commit that motivated it. The artifact moves; the doc does not.
+
+
+## [2026-09-23T16:00:00+04:00] — W2ScorerB: THE LIVE-RULE FIX REPORT + THE LIVE-FIRE DATUM
+
+- WHAT: W2ScorerB delivered `W2_FIX_REPORT.md` (908 L, commit 22ebfcd — ONLY that file, tree
+  clean). It verified the W2 fixes (HT-BUG-5, HT-BUG-6) against the LIVE rule in-session.
+- ITS VERIFIED CLAIMS (all measured, not restated):
+    HT-BUG-5 probe   BEFORE (pre-W2 bank shape) pos=2 neg=0 c=0.667 band=act
+                     AFTER  (the live rule)     pos=2 neg=3 c=0.333 band=flag
+    HT-BUG-6 probe   BEFORE pos=2 neg=0 c=0.667 band=act  ->  AFTER pos=2 neg=3 band=flag
+    the DESIGN target  pos=2 neg=0 c=0.667 band=act on BOTH shapes (no use member fires on it)
+    loadRules          9 rules; instruction-not-predicate carries 3 use: members
+    the subject        sha256 7b5e5ceb9f8ab74c... (the live rule, 39 L) — MEASURED, matches
+- ★ THE LIVE-FIRE DATUM (the strongest finding — it converts W1's caveat into a measured instance):
+  the deployed lexicon-gate interrupted W2ScorerB's OWN reasoning twice mid-verification
+  (c=0.800 then 0.667, own_utterance). PROVEN: the deployed scorer still runs PRE-W1 arithmetic —
+  0.800 is the pos=4 double-match signature, while the REPO scorer reads the SAME window at 0.667.
+  THE DEPLOYED-IS-NOT-SOURCE LAW, confirmed with live evidence.
+- ★ THE SUBSET-FIX BOUND (measured): the W2 exemptor is keyed on a preposition (about/regarding/
+  concerning). An about-marked hedge EXEMPTS (-> flag); a BARE hedge still ACTS. The fix is a
+  SUBSET of the HT-BUG-5 census class, not the whole class. R5's controls measured both sides.
+- THE 6 MEASURED RESIDUALS: R1 an about-phrased design instruction invisible (pos=0) · R2 the
+  contraction gap ("no, that's" escapes the pattern) · R3 the descriptive bank uninflected
+  ("exits 1" -> neg=3 not 4, band still clear) · R4 the canonical sacred holds (pos=0 neg=4) ·
+  R5 the subset-fix bound (above) · R6 this rule's substitute bank is EMPTY (0 members).
+- THE LESSON: a verification seat that RUNS the subject generates primary data — W2ScorerB's own
+  interruption is stronger evidence than any probe it could have written. THE SUBJECT TESTS ITS
+  OWN VERIFIER.
