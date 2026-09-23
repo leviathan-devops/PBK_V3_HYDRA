@@ -218,3 +218,20 @@ bash ~/.omp/agent/managed-skills/hydra-workers/scripts/check.sh      # from the 
 - do NOT trust these docs' numbers — re-run the predicates and the commands
 - do NOT mistake this dense canon for a built system: the code is 0 lines
 ```
+
+
+---
+
+## THE ARTIFACT (read this first) — as of 2842640
+
+```
+the deploy entry   src/index.ts · 74 L · sha16 6e3b6215d0b2175f   (the DEFAULT EXPORT contract)
+the frozen seam    SEAM/seam.ts · 192 L · sha16 66b66a7f10c7c6e7   (FROZEN — no drift)
+the hooks          src/surfaces/entry.ts:35-99 (7 pi.on)
+the rules          9 of 9 live rules load
+the gate           bunx tsc --noEmit -> exit 0
+the suite          bun test (engine, surfaces, adversarial) -> 24 pass / 0 fail
+the seal           Checkpoints/pbk-v3-ship-grade-fixes (dist sha16 6e3b6215d0b2175f · Mode B)
+the audit gate     AUDIT GATE: BLOCKED (the ocr chain is quota-dead; HT-BUG-10 confirmed LIVE)
+the deploy         BLOCKED — the operator runs W6_DEPLOY_HANDOFF.md
+```
