@@ -401,16 +401,23 @@ HOLE 8 MISSING RESIDUAL        -> named below
 
 **★ THE RESIDUAL (what could NOT be determined + what evidence would determine it):**
 ```
-RES-1  THE GATE-VOCABULARY'S RECALL IS UNMEASURED. I proposed 15 identifiers (D-1) but did NOT
-       measure how many of the 488 own_utterance rows contain them. EVIDENCE NEEDED: run
-       classifyProvenance over the existing ledger's 488 spans; report the aboutGate:true count.
-       ★ UNTIL THAT RUN, THE 15 IS A HYPOTHESIS, NOT A MEASUREMENT.
+RES-1  ★ RESOLVED — THE RECALL IS NOW MEASURED (`scripts/provenance-recall.ts`):
+         the ledger 856 rows · 535 own_utterance · 126 aboutGate:true · **57 own_utterance THAT
+         are aboutGate** → 535 → 478 actionable (10.7% suppression).
+       ★ AND THE RECALL GAP IS A NEW FINDING (HT-BUG-17): the 8 longest MISSED own_utterance
+         spans are ALL TOOL PAYLOADS (`{"command":...}`, `{"tasks":[...]}`) — machinery scored as
+         the agent's prose. The root cause through a CHANNEL door. FOLLOW-UP: provenance-gate the
+         tool_call surface too (today only the prose surface is gated).
 RES-2  THE OVER-SUPPRESS RISK IS UNQUANTIFIED. A real violation that happens to mention "the rule"
        or "the gate" would be suppressed. EVIDENCE NEEDED: the §8 negative half, run against the
        full evasion corpus (the host-test-failure-log's 15 bugs).
-RES-3  THE DEPLOY IS THE OPERATOR'S. I cannot close stop-condition 3 (the live round) — the live
-       extension path is guarded. EVIDENCE NEEDED: the operator runs W6_DEPLOY_HANDOFF.md, then the
-       ledger's aboutGate:true rows appear from the LIVE process.
+RES-3  THE DEPLOY IS THE OPERATOR'S — and the firewall now MEASURES it (D4 FAIL: the live ext
+       mtime < the src mtime). The firewall went from exit 4 -> exit 2 after N-1..N-3 landed.
+       EVIDENCE NEEDED: the operator runs W6_DEPLOY_HANDOFF.md; D4 flips to ok.
+RES-6  ★ HT-BUG-18 (NEW): the GI graph gate's remedy (`call ripwire`) is UNREACHABLE for this
+       project — ripwire is cwd-confined to Shared_Workspace; the project escapes it
+       (`RIPWIRE_PATH_DENIED`). The drift escalates on every retry. REPORTED, not looped (per the
+       goal's own unreachable-remedy law).
 RES-4  THE AUDIT LANE IS QUOTA-DEAD. Every ocr lane 429s (measured this session). EVIDENCE NEEDED:
        a non-rate-limited lane, or the chain recovering.
 RES-5  THE 6 W2/W1 RESIDUALS REMAIN OPEN (R1 about-phrased design invisible · R2 the contraction

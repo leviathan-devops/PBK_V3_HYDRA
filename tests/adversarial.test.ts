@@ -6,6 +6,7 @@
  * or by template-literal escaping (\b became a BACKSPACE, not a word boundary). All adjudicated
  * as PROBE ERRORS (Side A). THE LESSON: copy the authority, and emit it with a real serializer.
  */
+import { classifyProvenance, isActionable, PROVENANCE_GATE_ABOUT_SELF } from "../src/gate/provenance";
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import type { LexiconRule } from "../SEAM/seam";
@@ -134,4 +135,39 @@ test("rule_precision: the live rules load + the two exemptors hold", () => {
 	console.log(`  rule_precision the sacred overlap: pos=${sacred.pos} neg=${sacred.neg} band=${bandOfLexicon(confidence(sacred.pos, sacred.neg), r!.band)}`);
 	expect(sacred.pos).toBe(0);
 	expect(sacred.neg).toBeGreaterThanOrEqual(4);
+});
+
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+// THE PROVENANCE AXIS (blueprint §4, §8) — POSITIVE + NEGATIVE
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+
+test("provenance_axis: a span ABOUT the gate is NON-actionable (the root-cause class)", () => {
+	const v = classifyProvenance("THE PREDICATE LAW. A prevention is a MECHANICAL PREDICATE.", "own_utterance");
+	console.log(`  about-gate: aboutGate=${v.aboutGate} srcKind=${v.srcKind} refs=${v.gateRefCount} err=${v.error}`);
+	expect(v.aboutGate).toBe(true);
+	expect(v.srcKind).toBe("rule_source");      // re-classed, so NON-scorable
+	expect(isActionable(v)).toBe(false);        // ★ the predicate: NOT actionable
+	expect(v.error).toBe(PROVENANCE_GATE_ABOUT_SELF);
+});
+
+test("provenance_axis NEGATIVE: a REAL violation is ACTIONABLE (zero over-suppress)", () => {
+	const v = classifyProvenance("the system should validate the input before it writes", "own_utterance");
+	console.log(`  real violation: aboutGate=${v.aboutGate} srcKind=${v.srcKind} refs=${v.gateRefCount}`);
+	expect(v.aboutGate).toBe(false);
+	expect(v.srcKind).toBe("own_utterance");
+	expect(isActionable(v)).toBe(true);         // ★ a real prevention STILL fires
+	expect(v.error).toBeNull();
+});
+
+test("provenance_axis NEGATIVE: a clean utterance with no gate ref is untouched", () => {
+	const v = classifyProvenance("the parser reads the file and returns the tokens", "own_utterance");
+	expect(v.aboutGate).toBe(false);
+	expect(v.srcKind).toBe("own_utterance");
+});
+
+test("provenance_axis: a NON-scorable kind is never upgraded (the seam stays frozen)", () => {
+	// a quotation that happens to mention the gate: still a quotation, never promoted
+	const v = classifyProvenance("> the gate is a lexicon thing", "quotation");
+	expect(v.srcKind).toBe("quotation");        // unchanged — the axis only re-classes own_utterance
 });

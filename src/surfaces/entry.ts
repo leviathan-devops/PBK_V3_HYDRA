@@ -8,7 +8,8 @@
  * tool_result · ttsr_triggered · agent_end. post_tool_use is NOT emitted (0 hits in the binary)
  * so its handler ships unbound, named-and-skipped.
  */
-import type { CheckRequest, CheckResult, Decision } from "../../SEAM/seam";
+import type { CheckRequest, CheckResult, Decision, SrcKind } from "../../SEAM/seam";
+import { classifyProvenance } from "../gate/provenance";
 import { StreamBuffer } from "./stream";
 import { proseAction, CORRECTION_TYPE } from "./prose";
 import { toolAction } from "./tool";
@@ -51,9 +52,14 @@ export function install(pi: any, deps: EntryDeps): void {
 		for (const raw of lines) {
 			const line = raw.trim();
 			if (line.length < 8) continue;
+			// ★ THE PROVENANCE AXIS (blueprint §4): a span ABOUT the gate is recorded, never
+			// aborted. It resolves to `rule_source` (non-scorable) so the engine still records
+			// the row and the surface never aborts on the gate's own subject matter.
+			const base: SrcKind = fence ? "rule_source" : "own_utterance";
+			const prov = classifyProvenance(line, base, fence);
 			const res = await deps.check({
 				surface: "prose", phase: "edit", text: line,
-				sourceKind: fence ? "rule_source" : "own_utterance",
+				sourceKind: prov.srcKind,
 			});
 			const firing = res.decisions.filter((d) => d.band === "act" && d.sourceKind === "own_utterance");
 			if (firing.length === 0) continue;
