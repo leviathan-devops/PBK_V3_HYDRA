@@ -96,3 +96,53 @@ session + others) whose processes predate the pause.
 ★ THE RECOMMENDATION: a NEW omp process loads ALL of it (the kill switch + the native format +
   0 rules). For a process MID-TURN, the next session_start silences it.
 ```
+
+---
+
+## ★ THE HOT-RELOAD — FOUND (the operator's 3rd order, ANSWERED)
+
+**MEASURED in the omp binary (`cli.js`, verbatim):**
+```js
+{ name: "reload-plugins", icon: "restart",
+  description: "Reload all plugins (skills, commands, hooks, tools, agents, MCP)",
+  handle: async (e, t) => { await t.reloadPlugins(); await t.output("Plugins reloaded."); } }
+```
+
+**`/reload-plugins` — THE HOT RELOAD.** It re-imports the extension module FRESH FROM DISK, in the
+RUNNING process. No restart. (A sibling `/reload-runtime` exists too.)
+
+**WHY IT IS THE COMPLETE FIX (all three defects resolve at once):**
+```
+1  the MODULE re-imports  -> the NEW index.ts loads (the kill switch + the native format)
+2  session_start fires    -> the extension's reload() re-reads ~/.omp/agent/rules
+3  the dir is EMPTY       -> loadRules() returns [] -> the gate is SILENT
+★ ONE command, all three: /reload-plugins
+```
+
+**THE OTHER RELOAD PATH (for reference):** `/reload-runtime` calls `reloadPlugins()` too.
+
+**MEASURED: NO WATCHER on the extensions dir** (no inotify) and the running processes hold 0 fds
+on `lexicon-gate/index.ts` — the module is ESM-cached, read once at load. That is WHY a plain file
+edit does nothing until `/reload-plugins` (or a new process).
+
+## ★ THE OPERATOR'S ACTION (one line, per affected session)
+
+```
+type:  /reload-plugins
+★ in EVERY session whose goal loop is affected. That re-imports the fixed extension (the format +
+  the kill switch) AND re-reads the emptied rules dir (0 rules) -> the injections STOP in that
+  running process, no restart.
+```
+
+## THE STATE, FINAL (measured)
+
+```
+ttsr.enabled            false            the native TTSR, off
+the live rules          0 of 9           parked at ~/.omp/agent/rules.DISABLED-20260923/
+the extension index.ts  251 L · 2a126e5126609b47   (the kill switch + the native format)
+  it LOADS              7 hooks register (driven, this turn)
+the kill switch         existsSync read per-invocation · present->false, absent->true
+the guardians           0 procs · guardian-angel MASKED · profile-guardian DISABLED
+the ledger              1005 rows · 0 delta in 30s
+the HOT RELOAD          /reload-plugins  <- the operator's one command
+```
