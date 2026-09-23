@@ -1,3 +1,4 @@
+export { lexiconCheckSchema, type LexiconCheck } from "../lexicon.js";
 export { assertNever } from "./utils/assertNever.js";
 export { AbideError, isAbideError, type AbideErrorCode } from "./errors.js";
 export {
@@ -20,7 +21,6 @@ export {
   modelCheckSchema,
   deferredCheckSchema,
   unenforceableCheckSchema,
-  lexiconCheckSchema,
   checkSchema,
   calibrationSchema,
   calibrationVerdictSchema,
