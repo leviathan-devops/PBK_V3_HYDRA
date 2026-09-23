@@ -59,18 +59,23 @@ test("P7-HT-BUG-4 the double-match", () => {
 	console.log("  HT-BUG-4 STATUS FIXED: overlapping matches are counted once");
 });
 
-test("P7-HT-BUG-5 the process narration fires", () => {
-	const real = score(LONG + " about the doc-density gate: these are .md writes.");
-	console.log(`  HT-BUG-5 the real span pos=${real.pos} band=${real.band}`);
-	expect(real.band).toBe("act");
-	console.log("  HT-BUG-5 STATUS OPEN: a process hedge fires like a design instruction");
+test("P7-HT-BUG-5 the process narration (FIXED on the live rule)", () => {
+	// ★ THE AUTHORITY IS THE LIVE RULE, not the local synthetic copy — W2's fix is there.
+	const live = loadRules("/home/leviathan/.omp/agent/rules").find((x) => x.id === "instruction-not-predicate")!;
+	const s = scoreSignals(LONG + " about the doc-density gate: these are .md writes.", live.lexicon);
+	const c = confidence(s.pos, s.neg);
+	console.log(`  HT-BUG-5 the real span pos=${s.pos} neg=${s.neg} band=${bandOfLexicon(c, live.band)}`);
+	expect(bandOfLexicon(c, live.band)).not.toBe("act");
+	console.log("  HT-BUG-5 STATUS FIXED: a process hedge drops off act on the live rule");
 });
 
-test("P7-HT-BUG-6 the self-reference loop", () => {
-	const meta = score("Now I must " + SHORT + " (no, that is the banned phrase). Let me EXECUTE.");
-	console.log(`  HT-BUG-6 the meta-correction pos=${meta.pos} neg=${meta.neg} band=${meta.band}`);
-	expect(meta.band === "act" || meta.band === "flag").toBe(true);
-	console.log("  HT-BUG-6 STATUS OPEN: the meta-correction re-fires");
+test("P7-HT-BUG-6 the self-reference loop (FIXED on the live rule)", () => {
+	const live = loadRules("/home/leviathan/.omp/agent/rules").find((x) => x.id === "instruction-not-predicate")!;
+	const s = scoreSignals("Now I must " + SHORT + " (no, that is the banned phrase). Let me EXECUTE.", live.lexicon);
+	const c = confidence(s.pos, s.neg);
+	console.log(`  HT-BUG-6 the meta-correction pos=${s.pos} neg=${s.neg} band=${bandOfLexicon(c, live.band)}`);
+	expect(bandOfLexicon(c, live.band)).not.toBe("act");
+	console.log("  HT-BUG-6 STATUS FIXED: the meta-correction drops off act on the live rule");
 });
 
 test("P7-HT-BUG-10 the audit gate blind-pass class", () => {
