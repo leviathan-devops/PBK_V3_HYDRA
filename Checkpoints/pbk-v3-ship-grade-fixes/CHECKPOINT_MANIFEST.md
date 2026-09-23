@@ -66,3 +66,20 @@ sha256sum "$CP/dist/index.ts"   # 6e3b6215d0b2175f...
 cd "$CP" && bunx tsc --noEmit   # exit 0
 cd "$CP" && bun test ./tests/   # 24 pass 0 fail
 ```
+
+---
+
+## THE REFRESH (2026-09-23T17:05) — the provenance axis
+
+```
+the deploy entry   src/index.ts · 74 L · sha16 6e3b6215d0b2175f   (UNCHANGED — the axis is upstream)
+src/gate/provenance.ts   NEW · 111 L   (the provenance axis)
+src/surfaces/entry.ts    117 L         (wired: classifyProvenance into message_update)
+scripts/provenance-firewall.sh   86 L  (the one-command firewall, exit 2)
+scripts/provenance-recall.ts     1420 B (RES-1's measurement instrument)
+the suite         28 pass / 0 fail      (SOURCE scope — 4 new provenance tests)
+the firewall      exit 2                (D4 the deploy · D6 the blind pass — both operator-gated)
+```
+
+**THE AXIS (blueprint §4):** A SPAN IS ACTIONABLE IFF srcKind=="own_utterance" AND aboutGate==false,
+ELSE PROVENANCE_GATE_ABOUT_SELF. RES-1 MEASURED: 535 own_utterance → 478 actionable (57 re-classed).

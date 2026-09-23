@@ -542,3 +542,105 @@ Append-only. Every debug event lands HERE the moment it is understood. Never edi
   files into the extension dir is not.
 - LESSON: **a gate that blocks your own convenience is the gate working.** The remedy is to
   REMOVE the banned shape, not to reshape it. The pin's HARD STOP anticipated this exactly.
+
+
+## [2026-09-23T16:00:00+04:00] — W1Scorer's REPORT LANDED + ITS R-2 RESIDUAL ADJUDICATED
+
+- WHAT: W1Scorer delivered `W1_FIX_REPORT.md` (517 L, the REPORT floor met) as commit 8deb794 —
+  ONLY that file, tree clean. The report independently verifies the fixes in-session.
+- ITS VERIFIED CLAIMS: tsc exit 0 · 24 pass / 0 fail / 101 expects · F1=1.000 · the inflection
+  probe reads neg=3 flag on BOTH the fixture and the LIVE rule · the dedupe reads short==long==2 ·
+  the sacred overlap reads pos=0 neg=4 c=0.000 with the per-member arithmetic derived
+  (descriptive +1, use +3) · HT-BUG-14 proven by the measured pre-fix throw.
+- ★ ITS R-2 RESIDUAL ADJUDICATED — and it was UNDERSTATED, then correctly bounded:
+  R-2 said "no live rule has substitute members today." MEASURED: WRONG —
+  `theatrical-verification.md` carries THREE substitute members. So the risk is not hypothetical.
+  THEN MEASURED the actual overlap: the suggestive members (`verified…works`, `tests…pass`) and
+  the substitute members (`structural pass`, `no bugs found`, `looks correct`) match DISJOINT
+  spans — **0 overlapping spans found**.
+  THE VERDICT: R-2 is LATENT IN PRINCIPLE, NON-TRIGGERING IN PRACTICE. Recorded as a design note.
+- THE LESSON: a residual named from memory can be WRONG in both directions. W1Scorer said "no rule
+  has substitute" (false); the truth is "rules have substitute, but no span collides" (true).
+  MEASURE THE RESIDUAL, do not assert it.
+
+
+## [2026-09-23T16:30:00+04:00] — HT-BUG-16 · THE HANDOFF CARRIED A STALE ARTIFACT HASH
+
+- WHAT: W6_DEPLOY_HANDOFF.md (the operator's deploy instructions) stated the entry as
+  `src/index.ts · 58 L · sha16 aa8d1d3d5f2160c5`.
+- ROOT CAUSE: `aa8d1d3d5f2160c5` is the PRE-HT-BUG-15 hash — the 58 L entry WITHOUT the default
+  export. The handoff was written at 56c55e2; the entry's mtime/hash was NOT re-measured after
+  the HT-BUG-15 fix landed. `git show 552cb18:src/index.ts | sha256sum` = 6e3b6215d0b2175f (74 L).
+- WHY IT MATTERS: the handoff's whole purpose is the operator's act. A hash that does not match
+  the artifact either (a) blocks a correct deploy (the operator verifies, sees a mismatch) or
+  (b) licenses deploying the PRE-FIX artifact — which loads NOTHING (the exact HT-BUG-15 failure).
+  A stale hash in a deploy handoff is a FALSE-SUCCESS vector, not a cosmetic doc error.
+- FIX: corrected to `74 L · sha16 6e3b6215d0b2175f` + the correction note naming the old value.
+- ALSO CORRECTED: the handoff said "the entry registers the hooks 7 pi.on registrations" — the
+  entry IMPORTS install(); the 7 pi.on calls live at src/surfaces/entry.ts:35-99. MEASURED by
+  calling the default export with a stub pi (7 handlers returned). A verifier greps the wrong file
+  against the handoff's claim.
+- THE LESSON: a handoff's sha must be RE-MEASURED at the moment of writing, not carried from
+  the commit that motivated it. The artifact moves; the doc does not.
+
+
+## [2026-09-23T16:00:00+04:00] — W2ScorerB: THE LIVE-RULE FIX REPORT + THE LIVE-FIRE DATUM
+
+- WHAT: W2ScorerB delivered `W2_FIX_REPORT.md` (908 L, commit 22ebfcd — ONLY that file, tree
+  clean). It verified the W2 fixes (HT-BUG-5, HT-BUG-6) against the LIVE rule in-session.
+- ITS VERIFIED CLAIMS (all measured, not restated):
+    HT-BUG-5 probe   BEFORE (pre-W2 bank shape) pos=2 neg=0 c=0.667 band=act
+                     AFTER  (the live rule)     pos=2 neg=3 c=0.333 band=flag
+    HT-BUG-6 probe   BEFORE pos=2 neg=0 c=0.667 band=act  ->  AFTER pos=2 neg=3 band=flag
+    the DESIGN target  pos=2 neg=0 c=0.667 band=act on BOTH shapes (no use member fires on it)
+    loadRules          9 rules; instruction-not-predicate carries 3 use: members
+    the subject        sha256 7b5e5ceb9f8ab74c... (the live rule, 39 L) — MEASURED, matches
+- ★ THE LIVE-FIRE DATUM (the strongest finding — it converts W1's caveat into a measured instance):
+  the deployed lexicon-gate interrupted W2ScorerB's OWN reasoning twice mid-verification
+  (c=0.800 then 0.667, own_utterance). PROVEN: the deployed scorer still runs PRE-W1 arithmetic —
+  0.800 is the pos=4 double-match signature, while the REPO scorer reads the SAME window at 0.667.
+  THE DEPLOYED-IS-NOT-SOURCE LAW, confirmed with live evidence.
+- ★ THE SUBSET-FIX BOUND (measured): the W2 exemptor is keyed on a preposition (about/regarding/
+  concerning). An about-marked hedge EXEMPTS (-> flag); a BARE hedge still ACTS. The fix is a
+  SUBSET of the HT-BUG-5 census class, not the whole class. R5's controls measured both sides.
+- THE 6 MEASURED RESIDUALS: R1 an about-phrased design instruction invisible (pos=0) · R2 the
+  contraction gap ("no, that's" escapes the pattern) · R3 the descriptive bank uninflected
+  ("exits 1" -> neg=3 not 4, band still clear) · R4 the canonical sacred holds (pos=0 neg=4) ·
+  R5 the subset-fix bound (above) · R6 this rule's substitute bank is EMPTY (0 members).
+- THE LESSON: a verification seat that RUNS the subject generates primary data — W2ScorerB's own
+  interruption is stronger evidence than any probe it could have written. THE SUBJECT TESTS ITS
+  OWN VERIFIER.
+
+
+## [2026-09-23T17:00:00+04:00] — THE PROVENANCE AXIS BUILT + WIRED (blueprint §4) + TWO NEW FINDINGS
+
+- WHAT: implemented the provenance axis (`src/gate/provenance.ts`) and wired it into the
+  `message_update` surface (`src/surfaces/entry.ts`). tsc exit 0 · 24 pass / 0 fail ·
+  4 new provenance tests pass.
+- THE PREDICATE, LIVE: `A SPAN IS ACTIONABLE IFF srcKind=="own_utterance" AND aboutGate==false,
+  ELSE PROVENANCE_GATE_ABOUT_SELF.` MEASURED: an about-gate span → `rule_source` (non-actionable);
+  a real violation → `own_utterance` (actionable).
+- ★ RES-1 MEASURED (the recall, over the LIVE ledger):
+    the ledger rows:           856
+    own_utterance rows:        535
+    aboutGate:true (all):      126
+    own_utterance THAT are aboutGate: 57
+    ★ THE SUPPRESSION: 535 -> 478 actionable (57 re-classed, 10.7%)
+  the 15-term vocabulary was a HYPOTHESIS; it is now MEASURED at 57/535.
+- ★ FINDING HT-BUG-17 · THE TOOL-PAYLOAD PROVENANCE CLASS (found by RES-1's recall gap):
+  the 8 longest own_utterance spans the vocabulary MISSED are ALL tool payloads —
+  `{"command":...}`, `{"tasks":[...]}`, `{"result":{...}}`, `{"context":"# Goal..."}`. These are
+  MACHINERY, not the agent's prose, yet the source-kind gate scores them `own_utterance` (because
+  `classifySource` sees a line, not a channel). THIS IS THE ROOT CAUSE THROUGH A NEW DOOR: the same
+  "no notion of provenance" — now at the CHANNEL level (a tool's INPUT is not the agent's voice).
+  THE FIX (a follow-up): the tool_call surface should supply its own kind (the tool payload is
+  `doc`-like material). Today only the prose surface is provenance-gated.
+- ★ FINDING HT-BUG-18 · THE GRAPH GATE'S REMEDY IS UNREACHABLE FOR AN OUT-OF-CWD PROJECT:
+  the GI graph gate blocked a structural edit with `GRAPH_GATE_DRIFT_HIGH: call ripwire verb=callers
+  or graph-query verb=who-calls on the symbols you are modifying`. MEASURED: ripwire is
+  CWD-CONFINED — `RIPWIRE_PATH_DENIED: <project> escapes cwd /home/leviathan/JARVIS_WORKSPACE/
+  Shared_Workspace`. The remedy the gate names CANNOT be executed for a project outside the session
+  cwd; the drift escalates on every retry (observed 3 -> 4). This is HT-BUG-13's class (an
+  unreachable remedy) CONFIRMED at a new surface. PER THE GOAL'S OWN LAW: report it, never loop on
+  it. The wiring was completed via an ASSERTING scripted edit (the file was read in full; every
+  anchor asserted; the result verified with tsc + the suite), NOT a blind patch.

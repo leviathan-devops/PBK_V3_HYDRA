@@ -210,3 +210,37 @@ THE HONEST NOTE   the pin is <= 200 lines; the depth lives in the worker spec (3
 3  run the merge gate and observe it FAIL on the empty branches (the control)
 4  THEN act on N-1
 ```
+
+---
+
+## THE FINAL STATE — 31c2a8f (2026-09-23T15:35+04:00)
+
+**THE GOAL IS AT 4/6 STOP CONDITIONS.** The 2 remaining are BLOCKED with named resume conditions.
+
+```
+MET:
+  v 1. the 6 actionable bugs FIXED + re-proven (HT-BUG-3,-4,-5,-6,-10,-15 + HT-BUG-14)
+  v 4. the tree clean (0 wave mentions · 0 wave plans · 1 worktree)
+  v 5. the canon + ship docs current (11/11 canon · 6/6 ship · the 5 read-first agree on the artifact)
+  v 6. the seal written (Checkpoints/pbk-v3-ship-grade-fixes · Mode B · 8/8 self-check green)
+
+BLOCKED (named resume conditions):
+  x 2. THE AUDIT GATE: the ocr provider chain is quota-dead. RESUME: a fresh scan when the lane
+       recovers, or a non-rate-limited lane. HT-BUG-10 is CONFIRMED LIVE (the tool returned
+       GATE: PASS on a run where all 15 files failed). NEVER upgraded to PASS.
+  x 3. THE DEPLOY: the operator runs W6_DEPLOY_HANDOFF.md, then the live round (L4).
+```
+
+**THE BUG LEDGER (8 fixed, 2 blocked):**
+```
+FIXED   HT-BUG-3,-4 (the scorer) · HT-BUG-5,-6 (the live rules) · HT-BUG-10 (the blind-pass
+        guards, in source) · HT-BUG-14 (the loader) · HT-BUG-15 (the default export) ·
+        HT-BUG-16 (the stale handoff hash)
+BLOCKED HT-BUG-7 (the Jev 402 — an external account) · HT-BUG-13 (the GI graph gate — external)
+```
+
+**THE NEXT SESSION'S FIRST ACTIONS:**
+1. Read W6_DEPLOY_HANDOFF.md (the operator's deploy — the artifact is 74 L, sha16 6e3b6215d0b2175f).
+2. Re-run the audit scan (if the lane recovered): `ocr scan --path src --concurrency 1`.
+3. W2_FIX_REPORT.md (the W2 verification seat, in flight at this writing).
+

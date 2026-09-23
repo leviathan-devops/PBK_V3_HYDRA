@@ -219,3 +219,20 @@ are both empty. The next act that changes that is the DISPATCH, and it is gated 
 7  "blocked" as done            — a block names its resume condition
 8  "zero bugs found"            — a red flag about the instrument, not an achievement
 ```
+
+
+---
+
+## THE ARTIFACT (read this first) — as of 2842640
+
+```
+the deploy entry   src/index.ts · 74 L · sha16 6e3b6215d0b2175f   (the DEFAULT EXPORT contract)
+the frozen seam    SEAM/seam.ts · 192 L · sha16 66b66a7f10c7c6e7   (FROZEN — no drift)
+the hooks          src/surfaces/entry.ts:35-99 (7 pi.on)
+the rules          9 of 9 live rules load
+the gate           bunx tsc --noEmit -> exit 0
+the suite          bun test (engine, surfaces, adversarial) -> 24 pass / 0 fail
+the seal           Checkpoints/pbk-v3-ship-grade-fixes (dist sha16 6e3b6215d0b2175f · Mode B)
+the audit gate     AUDIT GATE: BLOCKED (the ocr chain is quota-dead; HT-BUG-10 confirmed LIVE)
+the deploy         BLOCKED — the operator runs W6_DEPLOY_HANDOFF.md
+```

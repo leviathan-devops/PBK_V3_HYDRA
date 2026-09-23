@@ -2,25 +2,30 @@
 
 The truth as of 2026-09-23T05:10+04:00. Overwrite semantics — stale content is REMOVED.
 
-## THE ONE-SENTENCE STATE (re-measured 2026-09-23T12:30)
+## THE ONE-SENTENCE STATE (re-measured 2026-09-23T15:45)
 
 ```
-★ THE PRODUCT NOW EXISTS. The merge landed; the combined tree is green.
+★ SHIP-GRADE EXCEPT FOR TWO OPERATOR/PROVIDER-GATED BLOCKERS.
 
-master       343dbb7   the MERGED tree: the engine + the surfaces in ONE src/
-the src      15 .ts files — the engine (lexicon/engine/lint/ledger) + the surfaces
-                     (gate/surfaces/action) + the merged entry (src/index.ts)
-the vendor   16 .ts, 1296 L (the vendored abide)
-the gate     bunx tsc --noEmit -> exit 0 · bun test tests/ -> 40 pass 0 fail
-the oracles  15 of 15 carry a value (10 moved from PENDING at the merge)
-the seam     66b66a7f10c7c6e7 (unchanged across the whole build)
+master       56c55e2   the ship-grade tree: 6 bugs FIXED + re-proven · the cleanup done
+the src      15 .ts · tests 3 · vendor 16 · the seam 66b66a7f10c7c6e7 (unchanged)
+the gate     bunx tsc --noEmit -> exit 0 · bun test ./tests/ -> 24 pass 0 fail
+             ★ THE HONEST COUNT IS 24. A pattern-matched `bun test tests/...` inflates it by
+               matching the Checkpoints copies — always measure with the ./ prefix.
+the bugs     13 found · 6 FIXED (HT-BUG-3,-4,-5,-6,-10,-15) · HT-BUG-14 found+fixed · 2 BLOCKED
 
-THE RUNTIME (the live extension, NOT the new tree)
-  the pedigree fix is LIVE — verified by the A/B in the session JSONL:
-    the old channel (user-role) ends at line 31948; the new (customType "ttsr-injection")
-    starts at line 32034.
-  the ledger: 335 rows · the exemptor suppresses 32% (228 own_utterance / 107 quotation)
-  the Jev path: BLOCKED (402) — 335/335 rows carry jev:null, a NAMED failure
+THE FIXES (each re-proven on the real path)
+  HT-BUG-3  the exemptor inflection   neg=3 flag   HT-BUG-4  the double-match  2 vs 2
+  HT-BUG-5  the process narration     flag         HT-BUG-6  the self-reference  flag
+  HT-BUG-10 the audit gate's blind pass  (in source, NOT live)
+  HT-BUG-14 the loader read the live rules  9 of 9     HT-BUG-15 the default export  7 hooks
+  PRESERVED: the DESIGN instruction still act · the sacred overlap still 0.000
+
+THE TWO BLOCKERS (both OUTSIDE the code)
+  B-1 THE AUDIT GATE: (a) its fix needs a NEW process (ESM-cached); (b) the ocr scan is
+      RATE-LIMITED (429 on every file). A BLOCKED gate is never upgraded to PASS.
+  B-2 THE DEPLOY: the operator's act — W6_DEPLOY_HANDOFF.md. The entry now carries the DEFAULT
+      EXPORT, so it CAN load.
 ```
 
 ## THE TOPOLOGY (committed, verified)
@@ -293,3 +298,47 @@ lib.ts:288      isQuotedMatch(line, match) — the quote-STATE walk (not an inde
 4  THE PER-DELTA COST — message_update fires per delta; the 4 KB slice(0,4000) cap is what
    keeps the cost flat (0.024 ms). Removing the cap would scale with delta size.
 ```
+
+---
+
+## THE FINAL STATE — 1890262 (2026-09-23T16:40+04:00)
+
+**THE ARTIFACT (the thing that runs):**
+```
+the entry            src/index.ts · 74 L · sha16 6e3b6215d0b2175f   (the deploy contract, HT-BUG-15)
+the hooks            src/surfaces/entry.ts:35-99 (7 pi.on: session_start, input, message_update,
+                     tool_call, tool_result, ttsr_triggered, agent_end)
+the rules            9 of 9 live rules load through the engine loader
+the gate             bunx tsc --noEmit -> exit 0
+the suite            bun test (engine, surfaces, adversarial) -> 24 pass 0 fail
+the tree             clean · 1 worktree
+the seal             Checkpoints/pbk-v3-ship-grade-fixes (dist sha 6e3b6215d0b2175f)
+```
+
+**THE BUG LEDGER (all measured this session):**
+```
+HT-BUG-3   the exemptor inflection gap        FIXED (neg>0 on the live rule)
+HT-BUG-4   the overlapping double-count       FIXED (short==long==2)
+HT-BUG-5   the rule fires on process narration FIXED (pos=2 neg=3 band=flag)
+HT-BUG-6   the self-reference loop            FIXED (pos=2 neg=3 band=flag)
+HT-BUG-10  the audit gate's blind pass        FIXED (3 guards on disk; the gate reads BLOCKED until live)
+HT-BUG-14  the loader could not read live rules FIXED (9 of 9 load)
+HT-BUG-15  the extension had NO default export FIXED (7 hooks register)
+HT-BUG-16  the handoff carried a STALE hash   FIXED (74 L · 6e3b6215d0b2175f, was the pre-fix 58 L)
+```
+
+**THE OPEN / BLOCKED:**
+```
+HT-BUG-7   the Jev 402 (an external account)         BLOCKED — outside this tree
+HT-BUG-13  the GI graph gate                          BLOCKED — an external extension
+the audit  the ocr scan 429 on the free lane          BLOCKED — a paid lane was tried (poolside-laguna-s)
+the deploy the live lexicon-gate path                 BLOCKED — the operator's act (W6_DEPLOY_HANDOFF.md)
+```
+
+**THE TWO VERIFICATION REPORTS:**
+```
+W1_FIX_REPORT.md   546 L · commit 8deb794 (+ the R-2 adjudication appended)
+W2_FIX_REPORT.md   in flight (W2ScorerB) — the W2 fixes ARE covered by tests/adversarial.test.ts
+                   (P7-HT-BUG-5, P7-HT-BUG-6 read the LIVE rule; 5 pass / 0 fail)
+```
+
