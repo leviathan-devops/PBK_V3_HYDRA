@@ -43,16 +43,19 @@ test("P7-HT-BUG-3 the exemptor and inflections", () => {
 	expect(base.band).toBe("clear");
 	const infl = score(LONG + ": the check exits 1 on a violation");
 	console.log(`  HT-BUG-3 inflected: pos=${infl.pos} neg=${infl.neg} c=${infl.c.toFixed(3)} band=${infl.band}`);
-	expect(infl.pos).toBeGreaterThan(0);
-	console.log("  HT-BUG-3 STATUS OPEN: an inflected form does not match the base-form exemptor");
+	// THE FIX: the exemptor expands the inflection -> neg>0 and the band drops off act
+	expect(infl.neg).toBeGreaterThan(0);
+	expect(infl.band).not.toBe("act");
+	console.log("  HT-BUG-3 STATUS FIXED: the exemptor expands the inflection (neg>0)");
 });
 
 test("P7-HT-BUG-4 the double-match", () => {
 	const a = score(SHORT), b = score(LONG);
 	console.log(`  HT-BUG-4 short pos=${a.pos} c=${a.c.toFixed(3)} band=${a.band}`);
 	console.log(`  HT-BUG-4 long  pos=${b.pos} c=${b.c.toFixed(3)} band=${b.band}`);
-	expect(b.pos).toBeGreaterThan(a.pos);
-	console.log("  HT-BUG-4 STATUS OPEN: two members share the tail; the score doubles");
+	// THE FIX: two members sharing a tail no longer double-count -> the same pos
+	expect(b.pos).toBe(a.pos);
+	console.log("  HT-BUG-4 STATUS FIXED: overlapping matches are counted once");
 });
 
 test("P7-HT-BUG-5 the process narration fires", () => {

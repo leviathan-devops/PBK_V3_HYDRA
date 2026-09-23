@@ -418,3 +418,49 @@ Append-only. Every debug event lands HERE the moment it is understood. Never edi
   would have reported FOUR FALSE DEFECTS against code that was correct.
 - EVIDENCE: the four failure transcripts; the final run 6 pass / 0 fail; the numbers
   (0.667/0.800) matching the live ledger's 171 rows at 0.667 and 27 at 0.800.
+
+
+## [2026-09-23T14:35:00+04:00] — HT-BUG-10 FIXED: the audit gate's blind pass
+
+- SYMPTOM: the gate returned `GATE: PASS (0 critical/high)` with `filesReviewed=?` and NO artifact
+  written, while its own output recorded `status: completed_with_errors` and `comments: 10`.
+- ROOT CAUSE: `function gateVerdict(stdout)` computed
+  `const pass = sev.critical === 0 && sev.high === 0;`
+  with NO check of the coverage. A run that reviewed NOTHING produces zero findings -> PASS.
+  "0 findings" and "0 coverage" produce the SAME BYTES.
+- FIX (3 guards, before the pass computation):
+  1. `status` matching /error|fail|partial|abort|degraded/i -> BLOCKED (OCR_RUN_DEGRADED)
+  2. `filesReviewed` unresolved or <= 0 -> BLOCKED (OCR_NO_FILES_REVIEWED)
+  3. `summary.comments > the findings list` -> BLOCKED (OCR_COUNT_MISMATCH)
+- VERIFICATION (the instrument-validity control — 6 cases):
+  ```
+  THE FALSE PASS (completed_with_errors, 10 comments)  -> BLOCKED (OCR_RUN_DEGRADED)
+  the empty run (files_reviewed 0)                     -> BLOCKED (OCR_NO_FILES_REVIEWED)
+  the unresolved filesReviewed (?)                     -> BLOCKED (OCR_NO_FILES_REVIEWED)
+  THE LEGIT CLEAN (2 files, 0 findings)                -> GATE: PASS        <- the negative half
+  a real CRITICAL finding                              -> GATE: FAIL (1 critical)
+  a real HIGH finding                                  -> GATE: FAIL (1 high)
+  ```
+  POSITIVE: the 3 blind shapes all BLOCK. NEGATIVE: the legit clean still PASSES.
+- LESSON: a gate that cannot distinguish "reviewed, found nothing" from "reviewed NOTHING" will
+  pass while blind. THE COVERAGE IS THE ASSERTION, not the absence of findings.
+- EVIDENCE: index.js 254 -> 276 lines · sha16 (see the commit) · the 6-case proof at
+  /tmp/gate-verdict-proof.mjs · the backup /tmp/qwen-code-audit-index.js.bak
+
+## [2026-09-23T14:36:00+04:00] — A FALSE ALARM ON MY OWN WRITE (a probe error, recorded as such)
+
+- SYMPTOM: after applying the guard, a grep found NO trace of it, and the file's mtime read
+  01:18 (unchanged). I suspected a self-healing guard had reverted it.
+- INVESTIGATION: found `omp-ct-ext-guard.timer` — but read its script: it ONLY touches
+  `~/.omp/agent/config.yml`. INNOCENT. A controlled write-and-readback then proved the file IS
+  writable and the write PERSISTS (a marker survived 5 s and a separate read).
+- ROOT CAUSE: the FIRST extraction of `gateVerdict` used the non-greedy regex
+  `/function gateVerdict[\s\S]*?\n}\n/`, which stopped at the FIRST `\n}\n` — a TRUNCATED
+  copy WITHOUT my guard. The proof then "showed" the old behaviour. The edit HAD landed; the
+  PROBE was reading a stale slice.
+- FIX: extract the function by MATCHING BRACES. Re-ran: all 6 cases correct.
+- LESSON: **a probe that extracts source by regex is a probe that can silently read the wrong
+  bytes.** Match braces, or read the file whole. (The SAME class as the template-literal `\b`
+  corruption: the instrument, not the code.)
+- EVIDENCE: the controlled write-readback (the marker survived); the brace-matched extraction
+  (91 lines) vs the truncated regex (a partial function).

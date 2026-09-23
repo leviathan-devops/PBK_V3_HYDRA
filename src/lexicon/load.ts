@@ -10,6 +10,12 @@ import { readdirSync, readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import type { LexiconRule, PatternFamily, RuleStatus } from "../../SEAM/seam";
 
+/** Strip a LEADING inline flag group — `(?i)` -> "" (JS RegExp rejects it). Ported from the
+ * live extension's lib.ts:59. */
+export function stripInlineFlags(p: string): string {
+	return p.replace(/^\(\?[a-z]+\)/, "");
+}
+
 export interface RawRule {
 	id: string;
 	description: string;
@@ -28,14 +34,34 @@ function parseRule(file: string, raw: string): RawRule {
 	const id = (fm.match(/^id:\s*(.+)$/m)?.[1] ?? path.basename(file, ".md")).trim();
 	const description = (fm.match(/^description:\s*"?(.+?)"?\s*$/m)?.[1] ?? "").trim();
 
-	// the lexicon block: the four banks
+	// the lexicon block: the four banks.
+	// THE MEASURED FORMAT GAP (2026-09-23): this loader was first written for FLOW-style YAML
+	// (`use: [a, b]`) while the LIVE rules at ~/.omp/agent/rules/ use BLOCK style:
+	//     use:
+	//       - '\b(exit|predicate)\b'
+	// Both shapes are accepted now; a block-style bank is the live format and MUST parse.
 	const bank = (name: string): string[] => {
-		const bm = fm.match(new RegExp(`^\\s*${name}:\\s*\\[([^\\]]*)\\]`, "m"));
-		if (!bm) return [];
-		return bm[1]
-			.split(",")
-			.map((s) => s.trim().replace(/^["']|["']$/g, ""))
-			.filter((s) => s.length > 0);
+		// 1 · FLOW style: name: [a, b, c]
+		const flow = fm.match(new RegExp(`^\\s*${name}:\\s*\\[([^\\]]*)\\]`, "m"));
+		if (flow) {
+			return flow[1]
+				.split(",")
+				.map((s) => s.trim().replace(/^["']|["']$/g, ""))
+				.filter((s) => s.length > 0);
+		}
+		// 2 · BLOCK style: name:\n  - item\n  - item
+		const block = fm.match(new RegExp(`^\\s*${name}:\\s*$`, "m"));
+		if (!block) return [];
+		const after = fm.slice(block.index! + block[0].length);
+		const out: string[] = [];
+		for (const line of after.split("\n")) {
+			if (/^\s*#/.test(line)) continue;                     // a comment
+			if (/^\s*$/.test(line)) { if (out.length) break; else continue; }
+			const m2 = line.match(/^\s*-\s*(.+?)\s*$/);
+			if (!m2) { if (out.length) break; else continue; }     // the bank ended
+			out.push(m2[1].trim().replace(/^["']|["']$/g, ""));
+		}
+		return out.filter((s) => s.length > 0);
 	};
 	const lexicon: PatternFamily = {
 		descriptive: bank("descriptive"),
@@ -49,19 +75,26 @@ function parseRule(file: string, raw: string): RawRule {
 	if (!Array.isArray(lexicon.suggestive) || lexicon.suggestive.length === 0) {
 		throw new Error(`lexicon: ${id} has no 'suggestive:' bank (nothing to detect)`);
 	}
-	// validate every pattern compiles — an invalid regex is a loud THROW
+	// validate every pattern compiles — an invalid regex is a loud THROW.
+	// THE MEASURED GAP (2026-09-23): the LIVE rules carry a LEADING inline flag group (`(?i)`),
+	// which JS RegExp rejects. The live extension strips it (lib.ts:59 stripInlineFlags) and
+	// compiles case-insensitively; a rule whose regex threw at load took the whole extension down.
+	// We port that exact behaviour.
 	for (const [name, arr] of Object.entries(lexicon)) {
 		for (const p of arr ?? []) {
 			try {
-				new RegExp(p);
+				new RegExp(stripInlineFlags(p));
 			} catch {
 				throw new Error(`lexicon: ${id} invalid regex in ${name}: ${JSON.stringify(p)}`);
 			}
 		}
 	}
 	// the band: explicit low/high in the frontmatter
-	const low = Number(fm.match(/^\s*low:\s*([\d.]+)/m)?.[1] ?? NaN);
-	const high = Number(fm.match(/^\s*high:\s*([\d.]+)/m)?.[1] ?? NaN);
+	// the band: the LIVE rules write it INLINE (`band: { low: 0.3, high: 0.62 }`); the first
+	// loader only accepted `low:`/`high:` on separate lines. Accept both.
+	const inline = fm.match(/^\s*band:\s*\{\s*low:\s*([\d.]+)\s*,\s*high:\s*([\d.]+)\s*\}/m);
+	const low = Number(inline?.[1] ?? fm.match(/^\s*low:\s*([\d.]+)/m)?.[1] ?? NaN);
+	const high = Number(inline?.[2] ?? fm.match(/^\s*high:\s*([\d.]+)/m)?.[1] ?? NaN);
 	if (!Number.isFinite(low) || !Number.isFinite(high)) {
 		throw new Error(`lexicon: ${id} has no derived band ({low, high}) — an inherited band is banned`);
 	}
