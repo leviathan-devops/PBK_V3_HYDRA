@@ -1,0 +1,7 @@
+node_modules/
+bun.lock
+wt-engine/
+wt-surfaces/
+*.log
+dist/
+.ct/
