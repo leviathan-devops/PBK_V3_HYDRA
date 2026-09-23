@@ -188,9 +188,14 @@ AUDIT GATE: BLOCKED (PROVIDER_QUOTA_EXHAUSTED + OCR_JSON_ABSENT)
 
 THE RUNS (verbatim)
   1  action=scan  -> `GATE: PASS (0 critical/high)`  scope=workspace  filesReviewed=?  findings=0
-     ★ A FALSE PASS. `filesReviewed=?` is a literal unparsed count; 0 findings on 707 lines of
-       code carrying MEASURED defects (the double-match, the inflection gap, the re-score) is
-       not a clean bill — it is an UNOBSERVED run wearing a PASS.
+     ★ A FALSE PASS, WRONG IN THREE WAYS. The artifact (`/tmp/sg-ocr-27fa2460.json`,
+       session_id 50fd3d1e-9a64-4bb6-b12c-f35598b81510) records:
+         status:          completed_with_errors     (DEGRADED — the gate was silent)
+         summary.comments: 10                        (10 FINDINGS — the gate said 0)
+         files_reviewed:  2                          (NOT the 3 requested)
+         warnings:        1 x 429 rate_limited
+         the files:       tests/st-corbell-port.ts + src/hunter/graph/corbell-adapter.ts
+                          ★ NEITHER IS IN THE scanPath REQUESTED (a scope drift)
   2  action=review 6d2b7b2..4af8570 -> `GATE: BLOCKED (PROVIDER_QUOTA_EXHAUSTED)`
      the engine log: repeated `status_code: 429, error_class: rate_limited`, then
      `PROVIDER_QUOTA_EXHAUSTED`; also `file_read failed` on a checkpoint doc.

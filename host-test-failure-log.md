@@ -221,27 +221,45 @@ bugs discovered:  9
 NEXT AVAILABLE ID: HT-BUG-10
 ```
 
-## HT-BUG-10 · THE AUDIT GATE RETURNED A FALSE PASS FROM A BLIND RUN
+## HT-BUG-10 · THE AUDIT GATE RETURNED A FALSE PASS — WRONG IN **THREE** WAYS AT ONCE
 
 ```
-DISCOVERED   2026-09-23T07:50, by the agent (the instrument-validation check)
-EVIDENCE     MECHANICAL — two runs, same session, same lane:
-               action=scan  -> GATE: PASS (0 critical/high) · filesReviewed=? · findings=0
-               action=review -> GATE: BLOCKED (PROVIDER_QUOTA_EXHAUSTED) with the engine log
-                                showing repeated `status_code: 429, error_class: rate_limited`
-                                and a `file_read failed`
-MECHANISM    the scan path emits a PASS-shaped result when the provider chain exhausts: the
-             per-file reviews fail, no findings accumulate, and `filesReviewed` is left as a
-             literal `?` — the summary then reads "0 critical/high".
-ROOT CAUSE   THE GATE CANNOT DISTINGUISH "reviewed everything, found nothing" FROM "reviewed
-             nothing". Zero findings and zero coverage produce the SAME BYTES.
-CLASS        GATE-CANNOT-FAIL / BLIND-PASS (the highest-severity class for a gate)
+DISCOVERED   2026-09-23T07:56, by the agent (the artifact read-back)
+EVIDENCE     MECHANICAL — the artifact /tmp/sg-ocr-27fa2460.json vs the gate's own summary line:
+
+  THE GATE REPORTED                    THE ARTIFACT RECORDS
+  ---------------------------------    ------------------------------------------------
+  GATE: PASS (0 critical/high)         status: completed_with_errors     <- DEGRADED
+  findings=0                           comments: 10                      <- 10 FINDINGS
+  filesReviewed=?                      summary.files_reviewed: 2         <- NOT the 3 requested
+  (silent)                             warnings: 1 x 429 rate_limited
+  (silent)                             session_id: 50fd3d1e-9a64-4bb6-b12c-f35598b81510
+  (silent)                             the files: tests/st-corbell-port.ts +
+                                       src/hunter/graph/corbell-adapter.ts
+                                       ★ NEITHER IS IN THE scanPath REQUESTED
+
+MECHANISM    three independent failures compose into one PASS-shaped result:
+             (a) THE SCOPE DRIFT — the scan ran over the workspace, not the scanPath, and
+                 reviewed a DIFFERENT PROJECT's files (the project_summary names
+                 src/hunter/graph/corbell-adapter.ts — a GI-OMP path).
+             (b) THE COUNT LOSS — 10 comments were produced and the summary line reported 0.
+             (c) THE DEGRADATION HIDDEN — a 429 occurred (status completed_with_errors) and
+                 the gate's summary carried no sign of it.
+ROOT CAUSE   THE SUMMARY LINE AND THE ARTIFACT ARE NOT DERIVED FROM THE SAME DATA. The gate's
+             `findings=0 filesReviewed=?` is computed from a field the engine left UNRESOLVED
+             (`?` is the literal), while the artifact carries the real counts under different
+             keys (`summary.comments`, `summary.files_reviewed`).
+CLASS        GATE-CANNOT-FAIL / BLIND-PASS / COUNT-LOSS / SCOPE-DRIFT (four classes at once)
 SEVERITY     CRITICAL — a false PASS on the audit gate permits every downstream ship claim.
-WORK ORDER   the scan path must FAIL LOUD when `filesReviewed` is unresolved or zero: emit
-             `BLOCKED (NO_FILES_REVIEWED)` rather than a PASS. The instrument-validity law
-             (a known-defect corpus must produce findings) belongs in the gate itself.
-STATUS       OPEN — recorded; the audit for this build is BLOCKED, not passed.
-MISFIRE RISK none — the change can only convert a false PASS into a loud BLOCKED.
+             Worse: it is false in the direction that matters (it hid 10 findings and a 429).
+WORK ORDER   1. the scan path must HONOUR scanPath (it reviewed another project's files).
+             2. the summary must be DERIVED from the artifact's own counts; `?` must be a
+                loud BLOCKED, never a silent pass.
+             3. a nonzero `warnings` array containing a rate-limit must set the gate BLOCKED.
+             4. the instrument-validity control: run the gate on a KNOWN-DEFECT corpus; if it
+                reports 0, the gate is broken — do not trust its silence.
+STATUS       OPEN — recorded. THE AUDIT FOR THIS BUILD IS BLOCKED, NOT PASSED.
+MISFIRE RISK none — every proposed change can only convert a false PASS into a loud BLOCKED.
 ```
 
 ---

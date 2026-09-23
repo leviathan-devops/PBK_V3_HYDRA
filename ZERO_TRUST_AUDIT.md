@@ -9,7 +9,9 @@
 ## THE VERDICT (first line, per the law)
 
 # **NOT PRODUCTION GRADE.** The TOPOLOGY is production grade and mechanically proven. The
-# PRODUCT DOES NOT EXIST. One CRITICAL defect was found — in the audit gate itself.
+# PRODUCT DOES NOT EXIST. One CRITICAL defect was found — in the AUDIT GATE ITSELF, whose PASS
+# was false in three ways at once (it hid 10 findings, a 429, and reviewed the wrong project).
+# THE CODE AUDIT IS **BLOCKED** — every ship-ready claim is WITHHELD.
 
 ---
 
@@ -31,17 +33,38 @@
 
 ---
 
-## §2 · THE CRITICAL FINDING (HT-BUG-10 — the audit gate's blind pass)
+## §2 · THE CRITICAL FINDING (HT-BUG-10 — the audit gate's FALSE PASS, wrong in THREE ways)
 
 ```
 THE CLAIM   the code audit PASSED with 0 critical/high.
-THE REPRO   run 1: GATE: PASS (0 critical/high) · filesReviewed=? · findings=0
-            run 2: GATE: BLOCKED (PROVIDER_QUOTA_EXHAUSTED), the engine log showing repeated
-                   429 rate_limited + a file_read failed
-            run 3 (alternate lane): GATE: BLOCKED (OCR_JSON_ABSENT)
-★ THE GATE RETURNED A PASS-SHAPED RESULT FROM A RUN THAT REVIEWED NOTHING.
-  0 findings and 0 coverage produce the SAME BYTES. A gate that can pass while BLIND is the
-  highest-severity gate defect: it permits every downstream ship claim.
+
+THE ARTIFACT READ-BACK (/tmp/sg-ocr-27fa2460.json, session_id
+50fd3d1e-9a64-4bb6-b12c-f35598b81510) — THE GATE'S OWN OUTPUT FILE CONTRADICTS IT:
+
+  THE GATE REPORTED                    THE ARTIFACT RECORDS
+  ---------------------------------    ------------------------------------------------
+  GATE: PASS (0 critical/high)         status: completed_with_errors     <- DEGRADED
+  findings=0                           summary.comments: 10              <- 10 FINDINGS
+  filesReviewed=?                      summary.files_reviewed: 2         <- NOT the 3 asked
+  (silent)                             warnings: 1 x 429 rate_limited
+  (silent)                             the files reviewed: tests/st-corbell-port.ts +
+                                       src/hunter/graph/corbell-adapter.ts
+                                       ★ NEITHER IS IN THE scanPath REQUESTED
+
+★ THREE INDEPENDENT FAILURES COMPOSED INTO ONE PASS:
+  (a) THE SCOPE DRIFT — it reviewed ANOTHER PROJECT'S files (a GI-OMP path appeared in its
+      own project_summary), not the three source files I named.
+  (b) THE COUNT LOSS — 10 comments produced; the summary line reported 0.
+  (c) THE HIDDEN DEGRADATION — a 429 occurred; the gate's summary carried no sign of it.
+
+★ THE ROOT CAUSE: THE SUMMARY LINE AND THE ARTIFACT ARE NOT DERIVED FROM THE SAME DATA.
+  `findings=0 filesReviewed=?` is computed from a field the engine left UNRESOLVED (the `?` is
+  the literal), while the artifact carries the real counts under DIFFERENT KEYS
+  (`summary.comments`, `summary.files_reviewed`).
+
+★ AND THE INSTRUMENT-VALIDITY LESSON, at the gate level: the run reported 0 findings on 707
+  lines of code carrying MEASURED defects. A gate reporting ZERO on a KNOWN-DEFECT corpus is a
+  RED FLAG about the INSTRUMENT — the exact law this whole session was about.
 ```
 
 ---
