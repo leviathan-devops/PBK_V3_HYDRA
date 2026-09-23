@@ -644,3 +644,31 @@ Append-only. Every debug event lands HERE the moment it is understood. Never edi
   unreachable remedy) CONFIRMED at a new surface. PER THE GOAL'S OWN LAW: report it, never loop on
   it. The wiring was completed via an ASSERTING scripted edit (the file was read in full; every
   anchor asserted; the result verified with tsc + the suite), NOT a blind patch.
+
+
+## [2026-09-23T17:30:00+04:00] — THE OCR AUDIT LANE PINNED TO muse-GO + THE PROTOCOL DEFECT (HT-BUG-19)
+
+- THE OPERATOR'S RULING: "use this for ocr. pin it" — pin the ocr code-review gate to the
+  muse-on-GO seat.
+- THE PIN (the sanctioned CLI path): `ocr config set provider muse-go` → confirmed
+  `provider: muse-go`.
+- ★ HT-BUG-19 · THE muse-go OCR PROVIDER'S PROTOCOL WAS WRONG (`openai` vs `openai-responses`):
+  RAN a scoped scan on the pinned lane → 6/6 LLM calls FAILED, verbatim:
+    `POST "http://127.0.0.1:4097/zen/go/v1/chat/completions": 503 Service Unavailable
+     {"type":"server_error","message":"Upstream request failed: Endpoint is unavailable"}`
+  ROOT CAUSE: muse is RESPONSES-NATIVE (its reasoning arrives as an `output[]` item with an
+  `encrypted_content` blob). The `muse-go` ocr provider carried `protocol: openai` → ocr POSTed
+  to `/chat/completions` → the gateway 503s, EXACTLY as the muse-go-direct skill documents
+  ("chat/completions 503s"). The `muse-free` provider carried the CORRECT `protocol:
+  openai-responses`.
+  THE FIX (the sanctioned CLI, NEVER a hand-edit — the CT CONFIG LOCK fires on that):
+    `ocr config set custom_providers.muse-go.protocol openai-responses`
+  VERIFIED: the re-run made **0 503s and 0 429s** (was 6/6 failing) and ran real agentic review
+  (code_search + file_read tool calls).
+- THE COMPOUND WIN: the audited lanes were QUOTA-DEAD (openrouter-laguna-s-free 429
+  `free-models-per-min` 20/min; the paid poolside lane 429 `usage limit exceeded`). The muse-GO
+  lane carries the go-key cycler + the 8-key pool → it is the NON-rate-limited route the audit
+  gate needed. HT-BUG-19 was the ONLY thing standing between the pin and a working audit gate.
+- THE LESSON: pinning a provider is not enough — the PROTOCOL must match the model's wire. A
+  Responses-native model on an `openai` (chat/completions) protocol fails LOUD (503) and looks
+  like a dead lane; it is a config defect, not a quota wall. MEASURE the endpoint the tool hits.
