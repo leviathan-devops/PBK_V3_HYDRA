@@ -6,7 +6,7 @@
  * S7/S8 the mutation negatives.
  */
 import { describe, expect, test } from "bun:test";
-import type { CheckResult, Decision } from "../../SEAM/seam";
+import type { CheckResult, Decision, SrcKind } from "../../SEAM/seam";
 import { SCORABLE, classifySource, isScorable } from "../src/gate/source-kind";
 import { isQuotedMatch } from "../src/gate/quote";
 import { StreamBuffer } from "../src/surfaces/stream";
@@ -32,7 +32,7 @@ test("S1 source_kind_gate: only own_utterance is scorable", () => {
 	expect(SCORABLE.has("quotation")).toBe(false);
 	expect(SCORABLE.size).toBe(1);
 	// the contract: classifySource(line, inFence, fileKind) — inFence is a PARAMETER
-	const cases: [string, string][] = [
+	const cases: [string, SrcKind][] = [
 		["| a | table |", "table"],
 		["- `quoted`", "quotation"],
 		["> a quote", "quotation"],
