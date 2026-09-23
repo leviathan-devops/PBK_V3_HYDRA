@@ -220,3 +220,45 @@ bugs discovered:  9
 
 NEXT AVAILABLE ID: HT-BUG-10
 ```
+
+## HT-BUG-10 · THE AUDIT GATE RETURNED A FALSE PASS FROM A BLIND RUN
+
+```
+DISCOVERED   2026-09-23T07:50, by the agent (the instrument-validation check)
+EVIDENCE     MECHANICAL — two runs, same session, same lane:
+               action=scan  -> GATE: PASS (0 critical/high) · filesReviewed=? · findings=0
+               action=review -> GATE: BLOCKED (PROVIDER_QUOTA_EXHAUSTED) with the engine log
+                                showing repeated `status_code: 429, error_class: rate_limited`
+                                and a `file_read failed`
+MECHANISM    the scan path emits a PASS-shaped result when the provider chain exhausts: the
+             per-file reviews fail, no findings accumulate, and `filesReviewed` is left as a
+             literal `?` — the summary then reads "0 critical/high".
+ROOT CAUSE   THE GATE CANNOT DISTINGUISH "reviewed everything, found nothing" FROM "reviewed
+             nothing". Zero findings and zero coverage produce the SAME BYTES.
+CLASS        GATE-CANNOT-FAIL / BLIND-PASS (the highest-severity class for a gate)
+SEVERITY     CRITICAL — a false PASS on the audit gate permits every downstream ship claim.
+WORK ORDER   the scan path must FAIL LOUD when `filesReviewed` is unresolved or zero: emit
+             `BLOCKED (NO_FILES_REVIEWED)` rather than a PASS. The instrument-validity law
+             (a known-defect corpus must produce findings) belongs in the gate itself.
+STATUS       OPEN — recorded; the audit for this build is BLOCKED, not passed.
+MISFIRE RISK none — the change can only convert a false PASS into a loud BLOCKED.
+```
+
+---
+
+## THE RUNNING COUNT (updated)
+
+```
+bugs discovered:  10
+  CRITICAL:  1  (HT-BUG-10 — the audit gate's blind pass)
+  HIGH:      1  (HT-BUG-1)
+  MEDIUM:    5  (HT-BUG-2, -3, -5, -6, -7)
+  LOW:       2  (HT-BUG-4, -9)
+  INFO:      1  (HT-BUG-8)
+  FIXED:     2  (HT-BUG-1, -2)
+  OPEN:      5  (HT-BUG-3, -4, -5, -6, -10)
+  BLOCKED:   1  (HT-BUG-7)
+  CORRECTED: 1  (HT-BUG-9)
+
+NEXT AVAILABLE ID: HT-BUG-11
+```

@@ -183,9 +183,25 @@ GATE: FAIL — DO NOT MERGE
 # THE AUDIT GATE (STEP 4B — the mandatory input)
 
 ```
-AUDIT GATE: PENDING — the audit is invoked in this session; its verdict line is written here
-on completion. If the run is degraded (quota/health/partial scope) the line reads BLOCKED with
-the retry condition, and it is NEVER upgraded to PASS.
+AUDIT GATE: BLOCKED (PROVIDER_QUOTA_EXHAUSTED + OCR_JSON_ABSENT)
+
+THE RUNS (verbatim)
+  1  action=scan  -> `GATE: PASS (0 critical/high)`  scope=workspace  filesReviewed=?  findings=0
+     ★ A FALSE PASS. `filesReviewed=?` is a literal unparsed count; 0 findings on 707 lines of
+       code carrying MEASURED defects (the double-match, the inflection gap, the re-score) is
+       not a clean bill — it is an UNOBSERVED run wearing a PASS.
+  2  action=review 6d2b7b2..4af8570 -> `GATE: BLOCKED (PROVIDER_QUOTA_EXHAUSTED)`
+     the engine log: repeated `status_code: 429, error_class: rate_limited`, then
+     `PROVIDER_QUOTA_EXHAUSTED`; also `file_read failed` on a checkpoint doc.
+  3  action=review (provider=poolside) -> `GATE: BLOCKED (OCR_JSON_ABSENT)`
+
+THE RETRY CONDITION: quota reset on the openrouter-laguna-s-free lane, or a credentialed
+alternative lane. Until then the gate is BLOCKED and every ship-ready / production-grade /
+merge claim is WITHHELD.
+
+★ THE FINDING (recorded as HT-BUG-10): the gate returned a PASS-SHAPED result from a run that
+  reviewed nothing. A gate that can pass without observing is the "a gate that cannot fail is
+  documentation" class — here it is worse: it can pass while BLIND.
 ```
 
 **The wiring (per the audit-wiring table):** the verdict is quoted here; every CRITICAL/HIGH
