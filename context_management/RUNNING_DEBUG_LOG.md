@@ -542,3 +542,23 @@ Append-only. Every debug event lands HERE the moment it is understood. Never edi
   files into the extension dir is not.
 - LESSON: **a gate that blocks your own convenience is the gate working.** The remedy is to
   REMOVE the banned shape, not to reshape it. The pin's HARD STOP anticipated this exactly.
+
+
+## [2026-09-23T16:00:00+04:00] — W1Scorer's REPORT LANDED + ITS R-2 RESIDUAL ADJUDICATED
+
+- WHAT: W1Scorer delivered `W1_FIX_REPORT.md` (517 L, the REPORT floor met) as commit 8deb794 —
+  ONLY that file, tree clean. The report independently verifies the fixes in-session.
+- ITS VERIFIED CLAIMS: tsc exit 0 · 24 pass / 0 fail / 101 expects · F1=1.000 · the inflection
+  probe reads neg=3 flag on BOTH the fixture and the LIVE rule · the dedupe reads short==long==2 ·
+  the sacred overlap reads pos=0 neg=4 c=0.000 with the per-member arithmetic derived
+  (descriptive +1, use +3) · HT-BUG-14 proven by the measured pre-fix throw.
+- ★ ITS R-2 RESIDUAL ADJUDICATED — and it was UNDERSTATED, then correctly bounded:
+  R-2 said "no live rule has substitute members today." MEASURED: WRONG —
+  `theatrical-verification.md` carries THREE substitute members. So the risk is not hypothetical.
+  THEN MEASURED the actual overlap: the suggestive members (`verified…works`, `tests…pass`) and
+  the substitute members (`structural pass`, `no bugs found`, `looks correct`) match DISJOINT
+  spans — **0 overlapping spans found**.
+  THE VERDICT: R-2 is LATENT IN PRINCIPLE, NON-TRIGGERING IN PRACTICE. Recorded as a design note.
+- THE LESSON: a residual named from memory can be WRONG in both directions. W1Scorer said "no rule
+  has substitute" (false); the truth is "rules have substitute, but no span collides" (true).
+  MEASURE THE RESIDUAL, do not assert it.

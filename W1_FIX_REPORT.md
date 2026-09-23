@@ -515,3 +515,32 @@ CLOSE-OUT CHECKLIST
   [x] the temp rig cleaned: the /tmp/w1-before worktree removed, the stale probe copy deleted
   [ ] L0/L1 deployed-bundle proof — OUT OF SCOPE, orchestrator's gate (see §5.1)
 ```
+
+
+---
+
+## THE ORCHESTRATOR'S ADJUDICATION OF §5 (appended 2026-09-23T16:00)
+
+**§5.2 (the per-bank dedupe limitation) — MEASURED, CORRECTED, AND BOUNDED:**
+
+Your text said *"no live rule has substitute members today."* THAT IS WRONG — MEASURED:
+```
+theatrical-verification.md   substitute members: 3
+  \b(structural(ly)? (pass|green)|pass by design|source[- ]inspection|asserted the behavior|
+     it should work|trust me)\b
+  \b(no bugs? found|zero (bugs?|defects?|issues?))\b
+  \b(looks (correct|right|good)|seems (correct|fine|right))\b
+```
+So the cross-bank risk is NOT hypothetical. **I THEN MEASURED THE ACTUAL OVERLAP:** the rule's
+suggestive members (`verified|validated|…` + `works?|passing|…`, and `tests?|suite|…` +
+`pass|passed|green`) and its substitute members match **DISJOINT spans — 0 overlaps found.**
+
+**THE BOUNDED VERDICT:** the per-bank dedupe is a LATENT limitation (a cross-bank collision WOULD
+double-count) that is **NON-TRIGGERING on the current 9 rules**. It is a design note for the next
+rule author, not an active defect. The fix, when a rule needs it, is to make the span ledger
+SHARED across the positive banks (suggestive + substitute) while keeping the exemptor's ledger
+separate.
+
+**THE LESSON FOR BOTH OF US:** a residual named from memory can be wrong in BOTH directions. You
+said "no rule has substitute" (false); the truth is "rules have substitute, but no span collides"
+(true). **MEASURE THE RESIDUAL; do not assert it.** — the orchestrator
