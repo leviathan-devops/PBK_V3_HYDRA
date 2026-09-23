@@ -8,5 +8,11 @@
     "skipLibCheck": true,
     "types": []
   },
-  "include": ["SEAM/**/*.ts"]
+  "include": [
+    "SEAM/**/*.ts",
+    "src/**/*.ts",
+    "tests/**/*.ts",
+    "wt-engine/src/**/*.ts",
+    "wt-surfaces/src/**/*.ts"
+  ]
 }
