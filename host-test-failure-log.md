@@ -262,21 +262,114 @@ STATUS       OPEN — recorded. THE AUDIT FOR THIS BUILD IS BLOCKED, NOT PASSED.
 MISFIRE RISK none — every proposed change can only convert a false PASS into a loud BLOCKED.
 ```
 
+## HT-BUG-11 · THE GATE'S tsc LINE WAS THEATRICAL (src/ was never type-checked)
+
+```
+DISCOVERED   2026-09-23T08:20, by the orchestrator (the pre-verify pass, while the workers built)
+EVIDENCE     MECHANICAL — I planted a deliberate type error in the worktree's src/:
+               const x: number = "this is a string, not a number";
+             then ran `bunx tsc --noEmit` from the worktree root.
+               RESULT: EXIT=0 — the error was INVISIBLE.
+             The tsconfig's include was `["SEAM/**/*.ts"]` — src/ was never in the program.
+             THE CONTROL: with `include: [..., "src/**/*.ts"]` the SAME error was caught:
+               src/gate/__tscheck.ts(1,7): error TS2322: Type 'string' is not assignable to
+               type 'number'.
+MECHANISM    the tsconfig inherited from the master tree included ONLY the seam. Both worker
+             worktrees inherited it verbatim (they were created by `git worktree add` from the
+             same commit). So every gate line reading `bunx tsc --noEmit -> exit 0` was
+             checking the SEAM, never the worker's own code.
+ROOT CAUSE   THE GATE AND THE ARTIFACT WERE NOT AIMED AT THE SAME TARGET. The gate named a
+             command whose SCOPE excluded the thing under test. A green tsc proved the seam
+             compiles — a fact already known — and said nothing about src/.
+CLASS        GATE-WRONG-SCOPE / THEATRICAL-GATE (the same family as HT-BUG-10)
+SEVERITY     HIGH — a worker could ship type-broken code with a green gate line.
+WORK ORDER   FIXED: include -> ["SEAM/**/*.ts", "src/**/*.ts", "tests/**/*.ts"] in both
+             worktrees; master -> the merged layout. Both workers steered.
+STATUS       FIXED + PROVEN (the planted error is now caught; both worktrees re-run clean).
+MISFIRE RISK none — the change can only EXPAND the checked set.
+```
+
+## HT-BUG-12 · MY OWN PROBE WAS WRONG (a probe-error, NOT a defect — recorded as such)
+
+```
+DISCOVERED   2026-09-23T08:19, by the orchestrator (the same pre-verify pass)
+EVIDENCE     I asserted W2's import `../../SEAM/seam` in src/gate/source-kind.ts was a broken
+             path (I reasoned src/gate/ needs ../../../). I then MEASURED it:
+               cd wt-surfaces/src/gate && cd ../..  ->  wt-surfaces/
+               wt-surfaces/SEAM/seam.ts             ->  RESOLVES
+             ★ THE PATH WAS CORRECT. My probe was wrong.
+MECHANISM    the probe-error class: an assertion about code, made from reasoning instead of
+             measurement, then refuted by the measurement.
+ROOT CAUSE   I counted the directory depth in my head instead of running `cd`. The
+             probe-contract discipline (adjudicate BOTH ways before a verdict) caught it —
+             Side A (my expectation wrong) before Side B (a real defect).
+CLASS        PROBE-ERROR (recorded as a probe-error, NEVER as a defect)
+SEVERITY     N/A — no code change was made; no worker was misled (the correction was sent).
+WORK ORDER   none. Recorded so the next agent does not re-derive the false alarm.
+STATUS       CLOSED as a probe-error.
+MISFIRE RISK none.
+```
+
+## HT-BUG-13 · THE GI GRAPH GATE BLOCKED BOTH WORKERS WITH AN UNREACHABLE REMEDY
+
+```
+DISCOVERED   2026-09-23T09:35, by the ORCHESTRATOR (after both workers reported the same block)
+EVIDENCE     MECHANICAL — both workers' own reports, then the code read:
+             W1 (verbatim): "your GI graph gate (GRAPH_GATE_ABORT, drift 1.00) refuses my
+               edit-tool calls on vendor/abide/schema/rubric.ts. Its remedy (query the graph on
+               the symbol) is UNSATISFIABLE from my seat, measured 4x with raw errors."
+             W2 (verbatim): "the gate aborts on the vendored rubric.ts edit even after four
+               genuine graph queries — the substrate is ABSENT in my scope."
+             THE CODE (index.js, read verbatim):
+               function gateDecision(d, state, now) {      <- NO dial parameter
+                 if (d.drift >= TIER_T3_CUT && n >= TIER_T3_MIN_CONSECUTIVE) return {tier:"T3", ...}
+                 if (d.drift >= TIER_T2_CUT && n >= 3) return {tier:"T2", ...}
+                 if (d.drift >= TIER_T1_CUT) return {tier:"T1", ...}
+               }
+               "does gateDecision reference dial? False"   <- measured by the read
+MECHANISM    THREE defects, each measured:
+             (A) THE DIAL IS IGNORED. The gate's own refusal says "set GI_DIAL=OFF to disable
+                 the gate deliberately." The drift path (gateDecision) never reads the dial.
+                 THE DOCUMENTED REMEDY IS FALSE.
+             (B) THE REMEDY IS UNSATISFIABLE FOR GREENFIELD CODE. symbolVerified requires
+                 `q.resolved === true`, and `resolved = !errored && hasRows` where hasRows needs
+                 a tool output carrying "rows: [1-9]". A brand-new tree has NO graph rows, so
+                 resolved is false FOREVER and the drift cannot be cleared. The gate CANNOT be
+                 satisfied for new code.
+             (C) THE THRESHOLD IS UNREACHABLE FROM A COLD START. T3 needs drift >= 0.8 AND
+                 n >= 5 consecutive unverified edits; a fresh state yields drift 1.0 from the
+                 first edit, so the 5th structural edit aborts — no new module can be built.
+ROOT CAUSE   THE GATE'S REMEDY IS AN UNREACHABLE CONDITION. This is the exact case the
+             model-blame ban names: "the gate's trigger (the unreachable condition)". The
+             workers were blocked by MY infrastructure, not by their own work.
+CLASS        GATE-UNREACHABLE-REMEDY / FALSE-REMEDY / GREENFIELD-UNSATISFIABLE
+SEVERITY     HIGH — it blocks ALL greenfield construction under this extension.
+WORK ORDER   (1) gateDecision must take + honour the dial (or the message must stop naming a
+             remedy that does not exist). (2) the gate needs a greenfield path: a scope with NO
+             store must offer a reachable route (populate-on-demand that WORKS for an unindexed
+             tree, or an explicit, logged new-tree exemption). (3) the threshold must be
+             reachable from a cold start.
+STATUS       OPEN — recorded. BOTH WORKERS WERE BLOCKED BY IT; both were then infra-cut.
+MISFIRE RISK the fix must not weaken the gate for an INDEXED project (where its intent is
+             sound). The change is a GREENFIELD PATH, not a weakening.
+```
+
 ---
 
 ## THE RUNNING COUNT (updated)
 
 ```
-bugs discovered:  10
+bugs discovered:  12
   CRITICAL:  1  (HT-BUG-10 — the audit gate's blind pass)
-  HIGH:      1  (HT-BUG-1)
+  HIGH:      2  (HT-BUG-1, HT-BUG-11 — the theatrical tsc gate)
   MEDIUM:    5  (HT-BUG-2, -3, -5, -6, -7)
   LOW:       2  (HT-BUG-4, -9)
   INFO:      1  (HT-BUG-8)
-  FIXED:     2  (HT-BUG-1, -2)
+  PROBE-ERR: 1  (HT-BUG-12 — recorded as a probe-error, not a defect)
+  FIXED:     3  (HT-BUG-1, -2, -11)
   OPEN:      5  (HT-BUG-3, -4, -5, -6, -10)
   BLOCKED:   1  (HT-BUG-7)
   CORRECTED: 1  (HT-BUG-9)
 
-NEXT AVAILABLE ID: HT-BUG-11
+NEXT AVAILABLE ID: HT-BUG-13
 ```

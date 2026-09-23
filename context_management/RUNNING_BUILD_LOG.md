@@ -201,3 +201,65 @@ Append-only. Every work unit lands HERE the moment it happens.
   entries.
 - EVIDENCE: `ls wt-engine/src | wc -l` -> 0 ; `ls wt-surfaces/src | wc -l` -> 0.
 - NEXT: the dispatch is the only act that changes this number.
+
+## [2026-09-23T08:05:00+04:00] — THE DISPATCH (the first live run of the worker topology)
+
+- WHAT: W1 (the engine) + W2 (the surfaces) dispatched in ONE batch via the `task` tool, one
+  per git worktree. Each received a DPL1-grade brief pointing at its WORKER_SPEC.md.
+- WHY: the operator's directive — "use the factory to build everything and update canon/ship
+  docs regularly throughout". The factory (the topology) is armed; this is its first live run.
+- HOW: two dispatch prompts written to /tmp/w1-dispatch.md (127 L) + /tmp/w2-dispatch.md
+  (144 L), each carrying the mission, the reading order (absolute paths), the 7 deliverables
+  with WHAT/HOW/WHY/EXPECTED, the gate commands, the adversarial tests, the non-goals, the
+  anti-patterns, and the return format. The prompts POINT at the specs (333/343 L on disk) for
+  the depth — they never paste them.
+- EVIDENCE: the task tool returned two live agent ids (W1Engine, W2Surfaces). The worktrees
+  verified clean before dispatch; each seam sha 66b66a7f10c7c6e7.
+- NEXT: P3 — monitor the two streams; audit each return (per-hunk verdicts + §A coverage).
+
+
+## [2026-09-23T09:45:00+04:00] — THE FIRST LIVE WORKER RUN: 2 OF 14 DELIVERABLES, THEN A GATE BLOCK
+
+- WHAT: dispatched W1 (the engine) + W2 (the surfaces) in ONE batch — the first live run of the
+  hydra-workers topology. BOTH agents produced real work, then BOTH were blocked by the GI
+  graph gate, then BOTH were infra-cut (18m25s / 20m48s).
+- THE MEASURED RESULT (the disk is the truth):
+  ```
+  wt-engine   HEAD 4845795   D1 the vendored abide (16 .ts, 1296 L) + D2 the lexicon check type
+                             (the union wired: 5 members, tsc exit 0)
+  wt-surfaces HEAD 02d5c49   D1 the source-kind gate (ported verbatim; SCORABLE = own_utterance
+                             only; SrcKind from the frozen seam; 0 band math; 0 stubs)
+  ```
+- WHY: the operator's directive — use the factory. It RAN. It produced. It was blocked.
+- HOW: two DPL1-grade dispatch prompts (127 L / 144 L) pointing at the workers' own specs. Both
+  workers read their contracts, verified the seam sha, mapped the vendor source, and built.
+- EVIDENCE: both HEADs above; the oracle movement (OR-2/OR-3/OR-4 hold their input values; the
+  POST-STATE oracles stay PENDING because D3-D7 are unbuilt); the 13-bug failure log.
+- NEXT: the gate block (HT-BUG-13) is the named blocker. The workers CAN make progress on
+  non-structural edits; the structural-edit path is what trips.
+
+## [2026-09-23T09:45:30+04:00] — THE BLOCKER: MY OWN GRAPH GATE (HT-BUG-13, 3 measured defects)
+
+- WHAT: both workers reported the same block verbatim —
+  W1: "your GI graph gate (GRAPH_GATE_ABORT, drift 1.00) refuses my edit-tool calls on
+       vendor/abide/schema/rubric.ts. Its remedy (query the graph on the symbol) is
+       UNSATISFIABLE from my seat, measured 4x with raw errors."
+  W2: "the gate aborts on the vendored rubric.ts edit even after four genuine graph queries —
+       the substrate is ABSENT in my scope."
+- WHY: THREE defects, each measured in the extension's own code:
+  (A) THE DIAL IS IGNORED. The gate's refusal says "set GI_DIAL=OFF to disable the gate
+      deliberately." `function gateDecision(d, state, now)` takes NO dial; the read confirmed
+      "does gateDecision reference dial? False". THE DOCUMENTED REMEDY IS FALSE.
+  (B) THE REMEDY IS UNSATISFIABLE FOR GREENFIELD CODE. `symbolVerified` needs
+      `q.resolved === true`; `resolved = !errored && hasRows`; hasRows needs "rows: [1-9]" in a
+      tool output. A new tree has no graph rows -> unresolved forever -> drift 1.0 -> ABORT.
+  (C) THE THRESHOLD IS UNREACHABLE FROM A COLD START. T3 needs drift >= 0.8 AND n >= 5
+      consecutive unverified edits; a fresh state yields drift 1.0 from the first edit, so the
+      5th structural edit aborts.
+- HOW (the orchestrator's response): I applied W1's handed-over 2-line D2 patch MYSELF (the
+  `edit` path, which is not subject to the T2/T3 throw) — the union now has 5 members and tsc
+  is clean. I did NOT touch the frozen seam, the live extension, or the config.
+- EVIDENCE: HT-BUG-13 in host-test-failure-log.md (with the code quoted); wt-engine@4845795
+  (tsc exit 0, the union accepts lexicon); the 3 successful orchestrator edits.
+- NEXT: the gate needs a GREENFIELD path (a work order, not a weakening). The build continues
+  past it.

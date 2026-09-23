@@ -2,12 +2,22 @@
 
 The truth as of 2026-09-23T05:10+04:00. Overwrite semantics — stale content is REMOVED.
 
-## THE ONE-SENTENCE STATE
+## THE ONE-SENTENCE STATE (re-measured 2026-09-23T09:45)
 
-The **worker topology is ARMED and committed** (2 worktrees, 2 specs, 2 pins, 2 todo anchors,
-1 merge gate, all 4 predicates green); the **engine and the surfaces are UNBUILT** (both
-`src/` trees are empty); and the **live enforcement is OBSERVED firing on the builder's own
-session** (56 ledger rows, 14 FIRE events).
+```
+THE FIRST LIVE WORKER RUN HAPPENED. It produced 2 of 14 deliverables, then BOTH workers were
+blocked by the GI graph gate (HT-BUG-13) and infra-cut.
+
+wt-engine    HEAD 4845795   D1 the vendored abide (16 .ts, 1296 L) + D2 the lexicon check type
+                            (the discriminatedUnion wired to 5 members; bunx tsc --noEmit exit 0)
+wt-surfaces  HEAD 02d5c49   D1 the source-kind gate (ported verbatim; SCORABLE = own_utterance
+                            only; SrcKind from the frozen seam; 0 band math; 0 stubs)
+master       a8f088e…4af8570…  the topology + the canon + the ship docs + the checkpoint
+
+REMAINING: W1's D3-D7 · W2's D2-D7 · the merge · the migration · the live round.
+THE BLOCKER: the graph gate refuses structural edits on a greenfield tree with an unsatisfiable
+  remedy (HT-BUG-13, 3 defects, one of them a FALSE documented remedy).
+```
 
 ## THE TOPOLOGY (committed, verified)
 
