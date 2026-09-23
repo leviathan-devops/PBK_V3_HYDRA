@@ -203,3 +203,9 @@ grep -c FIRE ~/.omp/logs/omp.2026-09-23.191645.log
 bash ~/.omp/agent/managed-skills/hydra-workers/scripts/check.sh
 bash gates/merge-gate.sh worker/engine wt-engine
 ```
+
+**THE ARTIFACT (agreed across the read-first docs, 2026-09-23):**
+```
+the deploy entry   src/index.ts · 74 L · sha16 6e3b6215d0b2175f   (the DEFAULT EXPORT contract)
+the frozen seam    SEAM/seam.ts · 192 L · sha16 66b66a7f10c7c6e7   (FROZEN — no drift)
+```
