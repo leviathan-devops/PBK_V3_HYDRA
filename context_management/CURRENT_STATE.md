@@ -74,29 +74,63 @@ the injected correction    0.013 ms/call
 → at ~1000 deltas/turn the gate costs ~24 ms/turn. NOT a latency source.
 ```
 
-## THE HOT-RELOAD METHOD (the exact mechanism — measured, not assumed)
+## THE HOT-RELOAD METHOD (EXPERIMENTALLY PROVEN — the round trip, 2026-09-23 05:54-05:55)
 
 ```
-THE TWO CHANNELS, and they are NOT the same:
+THE CORRECTION: the first version of this section INFERRED the mechanism from log correlation
+it did not EXPERIMENT. An inference recorded as a measurement is the theatrical class. The
+experiment has now been run; this section carries its results.
 
-  A · RULE HOT-RELOAD (the .md files) — WORKS IN-PROCESS, at the next session_start
-      1. edit ~/.omp/agent/rules/<rule>.md
-      2. the RUNNING process picks it up at the NEXT session_start:
-         pi.on("session_start", async () => { lastAbort = ""; reload(); })   (index.ts:83-86)
-         reload() -> loadRules() -> readdirSync(RULES_DIR) + readFileSync per file  (lib.ts:137-141)
-         ★ the load READS DISK EVERY TIME — it is not cached across calls.
-      3. EVIDENCE: the log line `[lexicon-gate] 9 rules loaded`.
-         PROOF it re-loads in-process: pid 2458725 emitted FIVE load lines —
-         ['02:22:33','04:13:04','04:13:04','04:13:04','04:28:06'] — one process, five reloads.
+═══════════════════════════════════════════════════════════════════════════════
+THE TWO CHANNELS
+═══════════════════════════════════════════════════════════════════════════════
 
-  B · CODE RELOAD (index.ts / lib.ts) — NEEDS A NEW PROCESS
-      1. edit the .ts file (mtime changes; the module is ESM-cached after import)
-      2. the running process does NOT pick up the new CODE
-      3. a NEW omp process loads it at construction — evidence: a load line under a NEW pid.
-         PROOF: the 03:35-03:36 edits did not appear until pid 191645 started at 04:50:39.
+A · RULES (.md files in ~/.omp/agent/rules/) — RELOAD IN-PROCESS, NO RESTART
+    THE WIRE       pi.on("session_start", async () => { lastAbort = ""; reload(); })
+                   index.ts:83-86
+    THE RELOAD     reload() -> loadRules() -> readdirSync(RULES_DIR) + readFileSync per file
+                   lib.ts:137-141   ★ DISK IS READ EVERY CALL — nothing is cached
+    THE EVIDENCE   `[lexicon-gate] N rules loaded` (index.ts:51)
 
-THE MECHANISM IN ONE LINE: rules reload in-process at every session_start; code reloads
-only with a new process. THE LOAD LINE IS THE ONLY PROOF — never assume a reload happened.
+    ★ THE EXPERIMENT (the round trip, one pid, no restart):
+        04:50:39.844  pid 191645  9 rules loaded       ← the process start
+        --- plant ~/.omp/agent/rules/zz-probe-reload.md → 10 files on disk ---
+        05:54:37.619  pid 191645  runSubagent: reusing parent modelRegistry
+        05:54:39.829  pid 191645  10 rules loaded      ← ROUND 1: the ADD was seen
+        --- delete the probe → back to 9 files on disk ---
+        05:55:24.407  pid 191645  runSubagent: reusing parent modelRegistry
+        05:55:24.605  pid 191645  9 rules loaded       ← ROUND 2: the REMOVE was seen
+      THE COUNT WENT 9 -> 10 -> 9 IN ONE PID. The reversal brackets the mechanism.
+
+    ★ THE FUNCTION-LEVEL PROOF (same process, no session):
+        mutate the frontmatter threshold: 0.3 -> 0.4242 -> 0.3
+        loadRules() returned 0.3 -> 0.4242 -> 0.3   ← the re-read saw both
+        (Test A, which appended to the BODY, gave a FALSE NEGATIVE — the loader parses only
+         the frontmatter, lib.ts:142-147. A probe over an unread field reports "nothing
+         happened" and is indistinguishable from a broken loader. See the DEBUG_LOG.)
+
+    ★ THE TRIGGER: session_start fires PER SESSION IN THE PROCESS — not only at process start.
+        A SUBAGENT constructs a session in the PARENT process → session_start fires → reload().
+        MEASURED: pid 2458725 emitted FIVE load lines, THREE within 8 ms (04:13:04.657/.662/.665),
+        immediately after three `runSubagent` lines at 04:13:02. That cluster was the origin of
+        this whole investigation — a 3-loads-in-one-second burst is not a user restarting.
+
+B · CODE (index.ts / lib.ts) — NEEDS A NEW PROCESS
+    The module is ESM-cached after import. An edit does not reach a running process.
+    PROOF: the 03:35-03:36 edits did not appear until pid 191645 started at 04:50:39.
+    ★ NOTE: this half was NOT experimentally isolated (running a live code-mutation test was
+      not warranted). It is INFERRED from the load-line census: no pid that started before an
+      edit reports the post-edit behaviour. Recorded as inferred, not as measured.
+
+═══════════════════════════════════════════════════════════════════════════════
+THE OPERATING PROCEDURE
+═══════════════════════════════════════════════════════════════════════════════
+  a RULE edit takes effect at the NEXT session construction:
+     - a new omp process, OR
+     - a SUBAGENT spawn in the same process (measured)
+     → practical: edit a rule, spawn any trivial subagent, read the load line.
+  a CODE edit takes effect ONLY in a NEW process.
+  THE LOAD LINE IS THE ONLY PROOF. Grep for it; never assume a reload happened.
 ```
 
 ## WHAT EXISTS vs WHAT IS ABSENT
