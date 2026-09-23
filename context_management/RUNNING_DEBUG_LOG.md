@@ -512,3 +512,19 @@ Append-only. Every debug event lands HERE the moment it is understood. Never edi
   A gate that is correctly BLOCKED is a PASS for the GATE (it refused) and a FAIL for the BUILD
   (no audit). The two must not be confused.
 - EVIDENCE: the raw 429 body (twice, 90 s apart); `ocr session list` -> FILES 0.
+
+
+## [2026-09-23T15:32:00+04:00] — HT-BUG-15: THE EXTENSION HAD NO DEFAULT EXPORT
+
+- SYMPTOM: the W6 deploy-readiness check found `grep -c 'export default' src/index.ts` -> 0.
+- ROOT CAUSE: omp loads an extension by calling its DEFAULT EXPORT with `pi` (the live extension:
+  `export default function (pi: any): void` at index.ts:39). The merged tree exposed a clean
+  LIBRARY surface (boot/install/makeEngine) but not the HOST ENTRY CONTRACT. A deploy would have
+  loaded a file that registers ZERO hooks — SILENTLY.
+- FIX: `export default function pbk_v3(pi) { boot(pi, { rulesDir }) }` with the rules dir from
+  PBK_RULES_DIR or the live default.
+- VERIFICATION (the deploy probe): `typeof default === "function"` -> true; calling it registers
+  7 hooks.
+- LESSON: **the merge must assert the LOAD SHAPE, not only the library surface.** The workers built
+  the parts; the deploy contract is the orchestrator's to prove. A file that imports cleanly and
+  registers nothing is the silent-failure class.

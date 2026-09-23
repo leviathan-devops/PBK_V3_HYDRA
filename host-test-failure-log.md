@@ -354,6 +354,29 @@ MISFIRE RISK the fix must not weaken the gate for an INDEXED project (where its 
              sound). The change is a GREENFIELD PATH, not a weakening.
 ```
 
+## HT-BUG-15 · THE EXTENSION HAD NO DEFAULT EXPORT (a deploy would load NOTHING)
+
+```
+DISCOVERED   2026-09-23T15:30, by the orchestrator (the W6 deploy-readiness check)
+EVIDENCE     MECHANICAL — the live extension carries `export default function (pi: any): void`
+             (lexicon-gate/index.ts:39). MY TREE's src/index.ts had NAMED exports only
+             (boot, install, makeEngine) — `grep -c 'export default' src/index.ts` -> 0.
+MECHANISM    omp loads an extension by importing its file and CALLING THE DEFAULT EXPORT with
+             `pi`. Without it the extension registers ZERO hooks and does nothing.
+ROOT CAUSE   the merge produced a clean library surface (the engine's check + the surfaces'
+             install) but NOT the host entry contract. The workers built the parts; nobody
+             asserted the LOAD SHAPE.
+CLASS        DEPLOY-CONTRACT-MISSING (the extension is a library, not an extension)
+SEVERITY     HIGH — it blocks the deploy silently (the config would load a file that registers
+             nothing).
+WORK ORDER   FIXED: `export default function pbk_v3(pi) { boot(pi, { rulesDir }) }` with the
+             rules dir from PBK_RULES_DIR or the live default.
+STATUS       FIXED + PROVEN — the deploy probe: `typeof default === "function"` and calling it
+             registers 7 hooks (session_start · input · message_update · tool_call · tool_result ·
+             ttsr_triggered · agent_end).
+MISFIRE RISK none — it is an additive export; the named exports are untouched.
+```
+
 ---
 
 ## THE RUNNING COUNT (updated)
