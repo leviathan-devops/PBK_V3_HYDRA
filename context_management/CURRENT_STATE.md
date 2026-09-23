@@ -298,3 +298,47 @@ lib.ts:288      isQuotedMatch(line, match) — the quote-STATE walk (not an inde
 4  THE PER-DELTA COST — message_update fires per delta; the 4 KB slice(0,4000) cap is what
    keeps the cost flat (0.024 ms). Removing the cap would scale with delta size.
 ```
+
+---
+
+## THE FINAL STATE — 1890262 (2026-09-23T16:40+04:00)
+
+**THE ARTIFACT (the thing that runs):**
+```
+the entry            src/index.ts · 74 L · sha16 6e3b6215d0b2175f   (the deploy contract, HT-BUG-15)
+the hooks            src/surfaces/entry.ts:35-99 (7 pi.on: session_start, input, message_update,
+                     tool_call, tool_result, ttsr_triggered, agent_end)
+the rules            9 of 9 live rules load through the engine loader
+the gate             bunx tsc --noEmit -> exit 0
+the suite            bun test (engine, surfaces, adversarial) -> 24 pass 0 fail
+the tree             clean · 1 worktree
+the seal             Checkpoints/pbk-v3-ship-grade-fixes (dist sha 6e3b6215d0b2175f)
+```
+
+**THE BUG LEDGER (all measured this session):**
+```
+HT-BUG-3   the exemptor inflection gap        FIXED (neg>0 on the live rule)
+HT-BUG-4   the overlapping double-count       FIXED (short==long==2)
+HT-BUG-5   the rule fires on process narration FIXED (pos=2 neg=3 band=flag)
+HT-BUG-6   the self-reference loop            FIXED (pos=2 neg=3 band=flag)
+HT-BUG-10  the audit gate's blind pass        FIXED (3 guards on disk; the gate reads BLOCKED until live)
+HT-BUG-14  the loader could not read live rules FIXED (9 of 9 load)
+HT-BUG-15  the extension had NO default export FIXED (7 hooks register)
+HT-BUG-16  the handoff carried a STALE hash   FIXED (74 L · 6e3b6215d0b2175f, was the pre-fix 58 L)
+```
+
+**THE OPEN / BLOCKED:**
+```
+HT-BUG-7   the Jev 402 (an external account)         BLOCKED — outside this tree
+HT-BUG-13  the GI graph gate                          BLOCKED — an external extension
+the audit  the ocr scan 429 on the free lane          BLOCKED — a paid lane was tried (poolside-laguna-s)
+the deploy the live lexicon-gate path                 BLOCKED — the operator's act (W6_DEPLOY_HANDOFF.md)
+```
+
+**THE TWO VERIFICATION REPORTS:**
+```
+W1_FIX_REPORT.md   546 L · commit 8deb794 (+ the R-2 adjudication appended)
+W2_FIX_REPORT.md   in flight (W2ScorerB) — the W2 fixes ARE covered by tests/adversarial.test.ts
+                   (P7-HT-BUG-5, P7-HT-BUG-6 read the LIVE rule; 5 pass / 0 fail)
+```
+
