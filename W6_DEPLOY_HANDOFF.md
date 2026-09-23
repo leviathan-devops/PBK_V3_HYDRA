@@ -12,7 +12,11 @@ the live bundle      ~/.omp/agent/extensions/lexicon-gate/index.ts · 221 L · s
   its mtime          2026-09-23 06:08:08
 the running process  pid 13888 · started 2026-09-23 11:25:05
 the ledger           ~/.omp/run/lexicon-ledger.jsonl · 566 rows
-the new tree's entry src/index.ts · 58 L · sha16 aa8d1d3d5f2160c5
+the new tree's entry src/index.ts · 74 L · sha16 6e3b6215d0b2175f
+  ★ THE CORRECTION (found 2026-09-23 by re-measurement): the earlier value
+    (aa8d1d3d5f2160c5 · 58 L) is the PRE-HT-BUG-15 hash — the tree WITHOUT the default export,
+    i.e. the artifact that loads NOTHING. The current entry is 74 L. An operator verifying
+    against the stale hash would see a mismatch, or worse, deploy the pre-fix artifact.
 ```
 
 ## ★ THE DEPLOYED-IS-NOT-SOURCE FINDING (measured twice)
@@ -46,7 +50,11 @@ bunx tsc --noEmit                  exit 0
 bun test ./tests/                  24 pass / 0 fail   (SOURCE scope)
 the entry exports boot()           1
 the DEFAULT EXPORT (the contract)  1  <- HT-BUG-15 fixed + proven (7 hooks register)
-the entry registers the hooks      7 pi.on registrations
+the hooks register                 7 (MEASURED: calling the default export with a stub pi
+                                    returns session_start, input, message_update, tool_call,
+                                    tool_result, ttsr_triggered, agent_end)
+  ★ the registration site           src/surfaces/entry.ts:35-99 (7 pi.on calls) — NOT src/index.ts,
+                                    which imports install() from it. MEASURED by the probe above.
 the rules load                     9 of 9
 the audit gate                     BLOCKED (its fix is in source, not live; the scan writes no artifact)
 ```

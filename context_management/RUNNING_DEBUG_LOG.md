@@ -562,3 +562,23 @@ Append-only. Every debug event lands HERE the moment it is understood. Never edi
 - THE LESSON: a residual named from memory can be WRONG in both directions. W1Scorer said "no rule
   has substitute" (false); the truth is "rules have substitute, but no span collides" (true).
   MEASURE THE RESIDUAL, do not assert it.
+
+
+## [2026-09-23T16:30:00+04:00] — HT-BUG-16 · THE HANDOFF CARRIED A STALE ARTIFACT HASH
+
+- WHAT: W6_DEPLOY_HANDOFF.md (the operator's deploy instructions) stated the entry as
+  `src/index.ts · 58 L · sha16 aa8d1d3d5f2160c5`.
+- ROOT CAUSE: `aa8d1d3d5f2160c5` is the PRE-HT-BUG-15 hash — the 58 L entry WITHOUT the default
+  export. The handoff was written at 56c55e2; the entry's mtime/hash was NOT re-measured after
+  the HT-BUG-15 fix landed. `git show 552cb18:src/index.ts | sha256sum` = 6e3b6215d0b2175f (74 L).
+- WHY IT MATTERS: the handoff's whole purpose is the operator's act. A hash that does not match
+  the artifact either (a) blocks a correct deploy (the operator verifies, sees a mismatch) or
+  (b) licenses deploying the PRE-FIX artifact — which loads NOTHING (the exact HT-BUG-15 failure).
+  A stale hash in a deploy handoff is a FALSE-SUCCESS vector, not a cosmetic doc error.
+- FIX: corrected to `74 L · sha16 6e3b6215d0b2175f` + the correction note naming the old value.
+- ALSO CORRECTED: the handoff said "the entry registers the hooks 7 pi.on registrations" — the
+  entry IMPORTS install(); the 7 pi.on calls live at src/surfaces/entry.ts:35-99. MEASURED by
+  calling the default export with a stub pi (7 handlers returned). A verifier greps the wrong file
+  against the handoff's claim.
+- THE LESSON: a handoff's sha must be RE-MEASURED at the moment of writing, not carried from
+  the commit that motivated it. The artifact moves; the doc does not.
