@@ -342,3 +342,46 @@ W2_FIX_REPORT.md   in flight (W2ScorerB) — the W2 fixes ARE covered by tests/a
                    (P7-HT-BUG-5, P7-HT-BUG-6 read the LIVE rule; 5 pass / 0 fail)
 ```
 
+---
+
+## THE PROVENANCE AXIS — c7c57b5 (2026-09-23T17:10)
+
+**THE ROOT CAUSE CLOSED:** `derailment-data-log.md:§9` — *"THE SCORING PATH HAS NO NOTION OF
+PROVENANCE."* All 4 incidents (the correction re-score, the self-reference loop, the process
+narration, the inflection gap) landed inside `own_utterance`. The fix adds the SECOND axis:
+
+```
+A SPAN IS ACTIONABLE IFF srcKind == "own_utterance" AND aboutGate == false,
+ELSE PROVENANCE_GATE_ABOUT_SELF.
+```
+
+**WHAT RAN (the SUBJECT LAW):**
+```
+bunx tsc --noEmit                          exit 0
+bun test (engine, surfaces, adversarial)   28 pass / 0 fail   SCOPE: SOURCE (imports src/)
+  bun test -t provenance_axis              4 pass / 0 fail    (1 positive + 3 negatives)
+bash scripts/provenance-firewall.sh        exit 2             (D4 the deploy · D6 the blind pass)
+```
+
+**THE NEW ARTIFACTS:**
+```
+src/gate/provenance.ts      111 L   sha16 ef35f84260eca277   (the axis)
+src/surfaces/entry.ts       117 L   sha16 9d876427abc604d1   (wired: classifyProvenance)
+scripts/provenance-firewall.sh  86 L (the one-command firewall, 7 detectors)
+scripts/provenance-recall.ts         (RES-1's measurement instrument)
+src/index.ts                 74 L   sha16 6e3b6215d0b2175f   (UNCHANGED — the axis is upstream)
+```
+
+**RES-1 MEASURED (was a hypothesis, now a number):**
+```
+the ledger 856 rows · 535 own_utterance · 126 aboutGate:true
+★ 57 own_utterance rows ARE about-gate → 535 → 478 actionable (10.7% suppression)
+```
+
+**HT-BUG-17 (NEW):** the recall gap is TOOL-PAYLOAD JSON (`{"command":...}`, `{"tasks":[...]}`)
+scored as `own_utterance` — the root cause through a CHANNEL door. FOLLOW-UP: provenance-gate the
+tool_call surface too.
+
+**HT-BUG-18 (NEW):** the GI graph gate's remedy (`call ripwire`) is UNREACHABLE for this project —
+ripwire is cwd-confined to Shared_Workspace (`RIPWIRE_PATH_DENIED`). HT-BUG-13's class, confirmed.
+REPORTED, not looped.
