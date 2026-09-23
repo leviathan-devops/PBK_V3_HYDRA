@@ -54,9 +54,10 @@ The `Status:` line of a plan entry is the ONLY mutable field.
 ### SCRIPT
 - **What:** an independent code audit of the changed surface.
 - **How:** `qwen-code-audit` (Alibaba OpenCodeReview).
-- **PASS criteria:** `AUDIT GATE: PASS (0 critical/high)`.
-- **FAIL criteria:** `AUDIT GATE: FAIL` (blocking findings) or `BLOCKED` (a degraded run — never
-  upgraded to PASS).
+- **PASS criteria:** the verdict line reads PASS with `0 critical/high` (the literal string is
+  deliberately NOT reproduced here — see the note below).
+- **FAIL criteria:** the verdict line reads FAIL (blocking findings) or BLOCKED (a degraded run —
+  never upgraded to PASS).
 - **Status:** PENDING
 
 ---
@@ -223,4 +224,21 @@ G-4  THE tool_call CHANNEL'S BLAST RADIUS WAS NOT ENUMERATED — 9 ledger rows c
      JSON; the full set of legitimate commands it can block is unmeasured.
 G-5  THE WORKER BUILD IS UNTESTED — wt-engine/src and wt-surfaces/src are both EMPTY. No test
      of the product exists because the product does not exist.
+```
+
+
+---
+
+## ★ A NOTE ON THIS LOG'S OWN STRUCTURE (the self-referential defect, found + fixed)
+
+```
+THE DEFECT: the PLAN entry above originally quoted the verdict string LITERALLY in its
+pass-criteria line. A gate that greps the log for `AUDIT GATE: (PASS|FAIL|BLOCKED)` reads the
+FIRST match — and the first match was the PLAN's criteria text, which says PASS. **The gate
+would have read PASS on a BLOCKED run.**
+★ THIS IS HT-BUG-10'S CLASS, IN THIS LOG: a gate reading the wrong signal and returning a
+  PASS-shaped result. It was caught by running the grep the gate itself would run.
+THE FIX: the plan's criteria text is no longer a literal verdict string; only the ONE verdict
+  line carries the literal form. Verify with:
+    grep -c 'AUDIT GATE: ' TESTING_LOG.md      # must be exactly 1 (the verdict line)
 ```
