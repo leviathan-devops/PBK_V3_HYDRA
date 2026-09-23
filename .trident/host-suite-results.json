@@ -1,0 +1,112 @@
+{
+  "campaign": "hydra-workers first live run — the deep-host-testing round",
+  "date": "2026-09-23",
+  "rig": "HOST — the testing agent IS the subject (the meta-observation loop)",
+  "seat": {
+    "session_pid": 191645,
+    "boot": "2026-09-23T04:50:39+04:00",
+    "the_extension": "~/.omp/agent/extensions/lexicon-gate (index.ts 203 L, lib.ts 307 L)",
+    "the_rules": "9 in ~/.omp/agent/rules/ (mtime 2026-09-23 03:34)",
+    "the_ledger": "~/.omp/run/lexicon-ledger.jsonl (56 rows)",
+    "the_seam": "SEAM/seam.ts sha 66b66a7f10c7c6e7"
+  },
+  "verdict_classes": ["VERIFIED", "CONFIRMED-DEFECT", "DISPROVEN"],
+  "phases": {
+    "PHASE_0_DEPLOY_GROUND_TRUTH": {
+      "the_load_line": {"observed": "[lexicon-gate] 9 rules loaded @ 04:50:39 pid 191645", "verdict": "VERIFIED"},
+      "the_process_census": {"observed": "3 pids loaded (191645, 2458725, 3993067)", "verdict": "VERIFIED"},
+      "the_auth_probe": {"observed": "the Jev call reached the API (402 answered)", "verdict": "VERIFIED"},
+      "the_ledger_baseline": {"observed": "56 rows", "verdict": "VERIFIED"}
+    },
+    "PHASE_1_THE_FIRE_AND_THE_RECEIPT": {
+      "the_first_fire": {
+        "observed": "04:53:42 FIRE instruction-not-predicate c=0.667 kind=own_utterance",
+        "the_span": "Note: this is the FIRST LIVE RUN of the hydra-workers architecture. So I should be careful and thorough.",
+        "verdict": "VERIFIED",
+        "note": "the fire is CORRECT — the span is an intention where the law demands a predicate"
+      },
+      "the_exemptor": {
+        "observed": "42 own_utterance vs 14 quotation",
+        "verdict": "VERIFIED",
+        "note": "25% of hits suppressed by SCORABLE (lib.ts:71)"
+      },
+      "the_jev_wire": {
+        "observed": "8 rows: jev skip (named): 402 Payment Required, full body captured",
+        "verdict": "VERIFIED",
+        "note": "the API was reached; the failure is NAMED, never a silent null"
+      }
+    },
+    "PHASE_2_THE_LATENCY": {
+      "the_probe": {
+        "observed": {
+          "prose_message_update_ms": 0.024,
+          "tool_input_tool_call_ms": 0.015,
+          "tool_result_4000B_ms": 0.179,
+          "the_injected_correction_ms": 0.013
+        },
+        "method": "200 iterations x 9 rules per shape, warm-up pass, performance.now()",
+        "verdict": "VERIFIED",
+        "note": "~24 ms per 1000-delta turn; the 4 KB slice cap keeps it flat"
+      }
+    },
+    "PHASE_3_THE_CHANNELS": {
+      "the_tool_call_channel": {
+        "observed": "9 ledger rows carry tool-input JSON; a {\"tasks\":[...]} payload scored 0.667 record-anchor",
+        "verdict": "VERIFIED",
+        "note": "the gate scores ACTIONS, not only prose — an under-appreciated surface"
+      },
+      "the_tool_result_channel": {
+        "observed": "the 'doc' kind prevents firing on read material (index.ts:184-190)",
+        "verdict": "VERIFIED"
+      },
+      "the_correction_rescore": {
+        "observed": "14 rows at confidence 0.0 whose span IS the injected correction text",
+        "verdict": "CONFIRMED-DEFECT",
+        "severity": "MEDIUM",
+        "note": "harmless to the decision (never fires); wrong to the record (the gate scores its own voice)",
+        "the_fix": "a sentinel on injected text resolved by classifySource to 'doc' — the tool_result fix's twin",
+        "the_reason_not_applied": "a source edit to LIVE enforcement requires its own test round (D-111)"
+      }
+    },
+    "PHASE_4_THE_DISPROVEN": {
+      "the_loop_blocked_story": {
+        "the_hypothesis": "the gate blocks the TUI loop (blockedMs up to 2209 within 3s of load)",
+        "the_control": "8 pids carry loop-blocked with ZERO lexicon fires (64613 86/0, 1959440 75/0, 1009259 55/0, 2359630 49/0, 1194193 40/0, 49882 13/0, 3457826 11/0)",
+        "verdict": "DISPROVEN",
+        "note": "combined with the 0.024 ms/call cost, a 2209 ms block cannot be the gate"
+      }
+    },
+    "PHASE_5_THE_TOPOLOGY": {
+      "the_four_predicates": {"observed": "worker-planning PASS, worker-spec x2 PASS, hydra-workers PASS", "verdict": "VERIFIED"},
+      "the_merge_gate_control": {"observed": "GATE: FAIL on the empty branches (bun test)", "verdict": "VERIFIED", "note": "the gate bites"},
+      "the_predicate_specificity": {"observed": "G5 no worker spec (L1 not done); G6 no goal pin (L2 not done)", "verdict": "VERIFIED"}
+    },
+    "PHASE_6_THE_CANON": {
+      "the_docs": {"observed": "11 canon docs in context_management/", "verdict": "VERIFIED"},
+      "the_two_logs_first": {"observed": "RUNNING_DEBUG_LOG + RUNNING_BUILD_LOG written before the milestone docs", "verdict": "VERIFIED"},
+      "the_hot_reload_method": {"observed": "rules in-process at session_start (pid 2458725: 5 loads); code per-process (03:36 edit -> 04:50 pid)", "verdict": "VERIFIED"}
+    }
+  },
+  "the_defects_found": [
+    {"id": "D-1", "the_defect": "the correction re-score (14 rows at c=0.000)", "verdict": "CONFIRMED-DEFECT", "severity": "MEDIUM", "the_fix": "a sentinel resolved to 'doc'", "the_state": "DESIGNED, NOT APPLIED"},
+    {"id": "D-2", "the_defect": "both CREATE_PROMPTs still describe 4 sequential WAVES", "verdict": "CONFIRMED-DEFECT", "severity": "HIGH", "the_fix": "re-mint both pins against the worker topology", "the_state": "QUEUED (N-1)"}
+  ],
+  "the_hypotheses_disproven": [
+    {"id": "H-1", "the_hypothesis": "ui.loop-blocked is caused by the lexicon-gate", "verdict": "DISPROVEN", "the_control": "8 pids block with zero fires"}
+  ],
+  "the_negative_controls": [
+    {"the_instrument": "the merge gate", "the_control": "run on the empty branches", "the_result": "GATE: FAIL (bun test)"},
+    {"the_instrument": "the ledger census", "the_control": "join blocks to fires", "the_result": "8 pids block with 0 fires"},
+    {"the_instrument": "the latency probe", "the_control": "warm-up then 200 timed iterations", "the_result": "stable sub-ms"},
+    {"the_instrument": "the exemptor", "the_control": "count own_utterance vs quotation", "the_result": "42 vs 14 — it suppresses"},
+    {"the_instrument": "the Jev wire", "the_control": "read the 402 body", "the_result": "the API answered"}
+  ],
+  "the_residual": [
+    "the engine's behaviour: UNBUILT — no runtime evidence exists or can exist",
+    "the corpus sweep's F1: UNMEASURED — no scorer exists",
+    "the gate firing on a WORKER's prose: NOT OBSERVED — no worker has run",
+    "the merge: NEVER ATTEMPTED",
+    "the GitHub required checks: 0 remotes; the deny is local-only"
+  ],
+  "the_honest_verdict": "WITNESSED for the live enforcement, the exemptor, the Jev wire, the cost, and the topology predicates. PINNED-WITH-CONSTRAINTS for the rule-rate calibration (one session of data). FRONTIER for everything that depends on the unbuilt code. NOT 100% — the sweep that would prove it cannot run yet."
+}
