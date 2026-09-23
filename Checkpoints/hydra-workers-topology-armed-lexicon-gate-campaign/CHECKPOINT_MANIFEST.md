@@ -65,7 +65,7 @@ PENDING / UNBUILT
 ## THE COMPLETE CONTENTS (the file counts)
 
 ```
-src/                         10 .ts files
+src/                         4 .ts files (SEAM/seam.ts + the lexicon-gate 3)
   src/lexicon-gate/          3 (index.ts · lib.ts · lib.test.ts)  — the LIVE enforcement
   src/hydra/                 5 dirs (SEAM · PACKAGE_A_ENGINE · PACKAGE_B_SURFACES · MERGE · gates)
 dist/                        2 (index.ts · lib.ts) — the SHA-verified artifact copy
