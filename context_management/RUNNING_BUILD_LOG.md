@@ -355,3 +355,22 @@ Append-only. Every work unit lands HERE the moment it happens.
   11:25). The tool still returns the OLD `PASS (filesReviewed=?)`. AND the scan itself produces
   no artifact. THE AUDIT IS BLOCKED; the retry condition is a new process + a working scan.
 - NEXT: W4 (the channel test) · W5 (the cleanup) · W6 (the deploy handoff) · the docs + checkpoint.
+
+
+## [2026-09-23T15:05:00+04:00] — W5 + W6 COMPLETE (the cleanup + the deploy handoff)
+
+- WHAT: W5 the cleanup (the pins re-minted, the wave plans/worktrees/scratch removed) and W6 the
+  runtime seat + the deploy handoff report.
+- THE MEASURED RESULTS:
+  ```
+  the 'wave' mentions in the CREATE_PROMPTs   8 -> 0
+  the superseded *_WAVE_PLAN.md               2 -> 0
+  the merged worktrees                        2 -> 0 (master only; the BRANCHES kept as history)
+  my /tmp scratch                             removed (other sessions' files kept)
+  ★ THE HONEST TEST COUNT                      24 (not 63) — the 63 was pattern-bleed inflation
+  W6 the handoff                              W6_DEPLOY_HANDOFF.md (61 L) · the operator's act
+  ```
+- THE HONEST BLOCKERS (recorded, not hidden):
+  the audit gate's fix is IN SOURCE, NOT LIVE (mtime 14:31 vs the process 11:25:05);
+  the scan writes no artifact; the NEW tree has never run on the host.
+- NEXT: the docs (P8) + the checkpoint (P9) + the verdict.

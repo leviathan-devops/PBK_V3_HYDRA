@@ -250,3 +250,21 @@ THE FIX: the plan's criteria text is no longer a literal verdict string; only th
   line carries the literal form. Verify with:
     grep -c 'AUDIT GATE: ' TESTING_LOG.md      # must be exactly 1 (the verdict line)
 ```
+
+
+## TEST RESULT — 2026-09-23 — THE TREE'S OWN SUITE (the honest count)
+
+### SCRIPT
+- **The run (verbatim):**
+```
+cd /home/leviathan/JARVIS_WORKSPACE/OMP/PBK_V3_HYDRA
+bun test ./tests/engine.test.ts     -> 9 pass
+bun test ./tests/surfaces.test.ts   -> 8 pass
+bun test ./tests/adversarial.test.ts -> 7 pass
+bun test ./tests/                   -> 24 pass / 0 fail / 98 expect() / Ran 24 tests across 3 files
+```
+- **THE VERDICT:** PASS — but the SCOPE is SOURCE (the suite imports `src/`, not a deployed bundle)
+  AND the count is **24**, not the 63 previously reported. The 63 was INFLATED by `bun test`'s
+  substring-pattern matching (it counted the Checkpoints + worktree COPIES).
+- **THE SELECTORS (all PASS):** lexicon_sweep (F1=1.000) · lint_runner · lexicon_load_throws ·
+  source_kind_gate · quote_state · abort_dedupe · action_map · delta_accumulator · rule_precision.

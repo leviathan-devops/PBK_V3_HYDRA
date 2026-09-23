@@ -174,3 +174,52 @@ the lesson. A bug fixed without an entry is an un-learned lesson.
 - **THE VERIFICATION:** the cwd check printed both values before the measurements.
 - **THE LESSON:** **a `cd` persists across commands in one shell.** A measurement without a cwd
   assertion is a measurement of an unknown subject. Print `pwd` before any git/count measurement.
+
+
+## EN-13 — THE EXEMPTOR'S INFLECTION GAP + THE DOUBLE-MATCH (HT-BUG-3, HT-BUG-4) (7768f55)
+
+- **THE FINDING:** the exemptor `\bexit\b` did not match "exits", so an inflected predicate
+  never subtracted; and two suggestive members sharing a tail made the confidence two-valued
+  (0.667 vs 0.800).
+- **THE ROOT CAUSE:** `compile()` used the author's exact pattern (no inflection expansion); and
+  `scoreSignals` added BOTH overlapping matches.
+- **THE FIX:** `expandInflections()` (the alternation group + the bare-word case) applied to the
+  `use:` bank ONLY; a per-bank span-overlap dedupe in `scoreSignals`.
+- **THE VERIFICATION:** HT-BUG-3 `pos=2 neg=3 c=0.333 band=flag` (was neg=0 act) · HT-BUG-4
+  short 2 / long 2 (was 4 vs 2) · the SACRED overlap preserved (`pos=0 neg=4 c=0.000 clear`).
+- **THE LESSON:** a score that varies with a DUPLICATED TAIL is not a probability; and an
+  exemptor authored in base form never fires on inflections.
+
+## EN-14 — THE META-CORRECTION + THE PROCESS-HEDGE EXEMPTORS (HT-BUG-6, HT-BUG-5) (7768f55)
+
+- **THE FINDING:** the rule fired on the agent's ATTEMPT to comply ("(no, that's the banned
+  phrase)") and on its own process hedges ("let me be careful about X").
+- **THE ROOT CAUSE:** no `use:` member covered a meta-correction or a process hedge.
+- **THE FIX:** 2 new `use:` members in `instruction-not-predicate.md` — the meta-frame and the
+  hedge-about-preposition.
+- **THE VERIFICATION:** HT-BUG-6 `pos=2 neg=3 band=flag` (was act) · HT-BUG-5 the same · the
+  DESIGN instruction STILL fires act · the sacred overlap preserved.
+- **THE LESSON:** a rule about a SYSTEM must not fire on a sentence about a TURN.
+
+## EN-15 — THE LOADER COULD NOT READ THE LIVE RULES (HT-BUG-14, NEW)
+
+- **THE FINDING:** `loadRules(~/.omp/agent/rules)` THREW on the first rule.
+- **THE ROOT CAUSE — THREE format gaps, each measured:** the banks are BLOCK style (`- item`),
+  not flow (`[a, b]`); the band is INLINE (`band: { low, high }`), not two lines; and the
+  patterns carry a LEADING inline flag (`(?i)`), which JS `RegExp` rejects.
+- **THE FIX:** the block-style bank parser; the inline-band match; `stripInlineFlags` ported from
+  the live extension's `lib.ts:59` + a case-insensitive compile.
+- **THE VERIFICATION:** `loadRules` -> 9 of 9 rules load; the probes score correctly.
+- **THE LESSON:** the loader was written against a format the live rules do not use. THE
+  AUTHORITY IS THE DATA ON DISK, not the format in the author's head.
+
+## EN-16 — THE TEST COUNT WAS INFLATED BY COPIES (a measurement defect)
+
+- **THE FINDING:** the suite was reported as "63 pass"; after the cleanup it read "47", which
+  looked like a regression.
+- **THE ROOT CAUSE:** `bun test`'s positional args are SUBSTRING PATTERNS — `tests/engine.test.ts`
+  matched the REAL file AND the Checkpoints copy.
+- **THE FIX:** measure with an explicit `./` prefix per file. THE TREE'S OWN SUITE IS 24 TESTS
+  (engine 9 + surfaces 8 + adversarial 7), 0 fail.
+- **THE LESSON:** a count from a pattern-matched runner is not a count of the tree. The 63 was
+  never a regression — it was never 63.

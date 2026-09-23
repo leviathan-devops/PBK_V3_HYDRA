@@ -1,0 +1,19 @@
+{
+  "name": "pbk-v3-engine",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "description": "PBK v3 ENGINE (W1) - the abide-vendored deterministic decision engine behind check()",
+  "dependencies": {
+    "@ai-sdk/typesafe-ai": "3",
+    "ai": "^7.0.105",
+    "picomatch": "^4.0.2",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.2",
+    "@types/node": "^22",
+    "@types/picomatch": "4.0.3",
+    "typescript": "7.0.2"
+  }
+}
