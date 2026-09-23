@@ -184,47 +184,33 @@ GATE: FAIL — DO NOT MERGE
 # THE AUDIT GATE (STEP 4B — the mandatory input)
 
 ```
-AUDIT GATE: BLOCKED (REPRODUCED — the gate PASSES while writing NO ARTIFACT)
+AUDIT GATE: BLOCKED (the gate's fix is IN SOURCE, NOT LIVE — and the scan produces no artifact)
 
-THE SECOND ATTEMPT (2026-09-23T12:35), on the MERGED tree:
-  the health probe:  ✓ Connection test successful (the lane is UP)
-  the scan:          GATE: PASS (0 critical/high) · scope=workspace · filesReviewed=? · findings=0
-  THE ARTIFACT:      NONE. No sg-ocr-*.json was written. The newest artifact predates the run.
+THE FIX (HT-BUG-10, proven from disk):
+  ~/.omp/agent/extensions/qwen-code-audit/index.js  254 -> 276 L · mtime 14:31:18
+  +3 guards before the pass computation: OCR_RUN_DEGRADED · OCR_NO_FILES_REVIEWED ·
+  OCR_COUNT_MISMATCH. THE PROOF (the 6-case control, reading the FILE from disk):
+    the false pass (completed_with_errors, 10 comments) -> BLOCKED (OCR_RUN_DEGRADED)
+    the empty run (files_reviewed 0)                    -> BLOCKED (OCR_NO_FILES_REVIEWED)
+    the unresolved filesReviewed (?)                    -> BLOCKED (OCR_NO_FILES_REVIEWED)
+    THE LEGIT CLEAN (2 files, 0 findings)               -> GATE: PASS      <- the negative half
+    a real CRITICAL finding                             -> GATE: FAIL (1 critical)
+    a real HIGH finding                                 -> GATE: FAIL (1 high)
 
-★ THE INSTRUMENT-VALIDITY CONTROL REFUTES THE PASS: I KNOW this tree carries FOUR OPEN defects
-  (HT-BUG-3 the inflection gap · HT-BUG-4 the double-match · HT-BUG-5 the narration fire ·
-  HT-BUG-6 the self-reference loop) — measured by my own probe with numbers matching the live
-  ledger (0.667 / 0.800). A gate reporting 0 findings on a KNOWN-DEFECT corpus is a RED FLAG
-  about the INSTRUMENT, not a clean bill.
-★ HT-BUG-10 IS REPRODUCED: the gate reports PASS while (a) filesReviewed is unresolved (`?`)
-  and (b) NO artifact exists. The gate cannot distinguish "reviewed, found nothing" from
-  "reviewed NOTHING".
+★ WHY THE TOOL STILL SAYS PASS: THE DEPLOYED-IS-NOT-SOURCE LAW.
+  index.js mtime 14:31:18 vs the process start 11:25:05 — the module is ESM-cached.
+  The tool's `GATE: PASS (filesReviewed=?)` IS THE OLD CODE FIRING = HT-BUG-10 reproduced live.
+  With the fix live, the SAME call reads:
+    BLOCKED (OCR_NO_FILES_REVIEWED (filesReviewed=?) - the gate CANNOT claim PASS on an
+             unreviewed run)
 
-THE RETRY CONDITION: the scan path must fail LOUD when filesReviewed is unresolved or no
-artifact is written. Until then the gate is BLOCKED and every ship-ready claim is WITHHELD.
+★ A SECOND, DEEPER BLOCKER: the SCAN itself produces NO ARTIFACT (filesReviewed=?, 0 findings).
+  The gate's fix correctly refuses to pass it — but no real audit can be produced until the ocr
+  scan writes a proper artifact.
 
-THE RUNS (verbatim)
-  1  action=scan  -> `GATE: PASS (0 critical/high)`  scope=workspace  filesReviewed=?  findings=0
-     ★ A FALSE PASS, WRONG IN THREE WAYS. The artifact (`/tmp/sg-ocr-27fa2460.json`,
-       session_id 50fd3d1e-9a64-4bb6-b12c-f35598b81510) records:
-         status:          completed_with_errors     (DEGRADED — the gate was silent)
-         summary.comments: 10                        (10 FINDINGS — the gate said 0)
-         files_reviewed:  2                          (NOT the 3 requested)
-         warnings:        1 x 429 rate_limited
-         the files:       tests/st-corbell-port.ts + src/hunter/graph/corbell-adapter.ts
-                          ★ NEITHER IS IN THE scanPath REQUESTED (a scope drift)
-  2  action=review 6d2b7b2..4af8570 -> `GATE: BLOCKED (PROVIDER_QUOTA_EXHAUSTED)`
-     the engine log: repeated `status_code: 429, error_class: rate_limited`, then
-     `PROVIDER_QUOTA_EXHAUSTED`; also `file_read failed` on a checkpoint doc.
-  3  action=review (provider=poolside) -> `GATE: BLOCKED (OCR_JSON_ABSENT)`
-
-THE RETRY CONDITION: quota reset on the openrouter-laguna-s-free lane, or a credentialed
-alternative lane. Until then the gate is BLOCKED and every ship-ready / production-grade /
-merge claim is WITHHELD.
-
-★ THE FINDING (recorded as HT-BUG-10): the gate returned a PASS-SHAPED result from a run that
-  reviewed nothing. A gate that can pass without observing is the "a gate that cannot fail is
-  documentation" class — here it is worse: it can pass while BLIND.
+THE RETRY CONDITION: (1) a NEW omp process (the code is ESM-cached), AND (2) a working ocr scan
+  that writes an artifact with files_reviewed > 0. Until BOTH hold the gate is BLOCKED and every
+  ship-ready claim is WITHHELD.
 ```
 
 **The wiring (per the audit-wiring table):** the verdict is quoted here; every CRITICAL/HIGH

@@ -333,3 +333,25 @@ Append-only. Every work unit lands HERE the moment it happens.
       carries FOUR open defects. HT-BUG-10 REPRODUCED. → AUDIT GATE: BLOCKED (never a pass).
   ```
 - NEXT: P9 the checkpoint, then the verdict.
+
+
+## [2026-09-23T14:45:00+04:00] — W1 + W2 + W3 COMPLETE (4 bugs fixed, 1 new defect found + fixed)
+
+- WHAT: fixed HT-BUG-3, HT-BUG-4 (the scorer), HT-BUG-6, HT-BUG-5 (the live rules), and
+  HT-BUG-10 (the audit gate). FOUND AND FIXED HT-BUG-14 (the loader could not read the live rules).
+- THE MEASURED RESULTS:
+  ```
+  HT-BUG-3  the exemptor's inflection   BEFORE pos=2 neg=0 c=0.667 act  AFTER pos=2 neg=3 c=0.333 flag
+  HT-BUG-4  the double-match            BEFORE short 2 / long 4         AFTER short 2 / long 2
+  HT-BUG-6  the meta-correction         BEFORE pos=2 neg=0 act          AFTER pos=2 neg=3 flag
+  HT-BUG-5  the process hedge           BEFORE pos=4 act                AFTER pos=2 neg=3 flag
+  the DESIGN instruction (must fire)    still pos=2 band=act            PRESERVED
+  the sacred overlap (must stay clear)  pos=0 neg=4 c=0.000 clear       PRESERVED
+  HT-BUG-10 the audit gate's blind pass the 6-case control: 3 blind -> BLOCKED, clean -> PASS
+  HT-BUG-14 the loader's 3 format gaps  loadRules(live rules) -> 9 of 9
+  ```
+- THE GATE: tsc exit 0 · 64 pass / 0 fail · F1=1.000 · rule_precision PASS · the purity EMPTY
+- THE HONEST BLOCKER: the audit gate's fix is IN SOURCE, NOT LIVE (mtime 14:31 vs the process
+  11:25). The tool still returns the OLD `PASS (filesReviewed=?)`. AND the scan itself produces
+  no artifact. THE AUDIT IS BLOCKED; the retry condition is a new process + a working scan.
+- NEXT: W4 (the channel test) · W5 (the cleanup) · W6 (the deploy handoff) · the docs + checkpoint.

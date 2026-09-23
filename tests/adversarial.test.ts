@@ -9,6 +9,7 @@
 import { describe, expect, test } from "bun:test";
 import type { LexiconRule } from "../SEAM/seam";
 import { bandOfLexicon, confidence, scoreSignals } from "../src/lexicon/score";
+import { loadRules } from "../src/lexicon/load";
 import { SCORABLE, classifySource } from "../src/gate/source-kind";
 import { isQuotedMatch } from "../src/gate/quote";
 import { StreamBuffer } from "../src/surfaces/stream";
@@ -91,4 +92,32 @@ test("P7 the FP shield: the positive fires, the negatives do not", () => {
 	const b = new StreamBuffer();
 	expect([1,2,3,4,5].map(() => b.shouldFire("r", "s")).filter(Boolean).length).toBe(1);
 	for (const s of ["prose","tool-call","tool-result","post-tool-use"] as const) expect(actionFor(s, "act")).toBeTruthy();
+});
+
+// ── W2's rule_precision: the LIVE rules, read from disk, the exemptors proven ──
+test("rule_precision: the live rules load + the two exemptors hold", () => {
+	const rules = loadRules("/home/leviathan/.omp/agent/rules");
+	expect(rules.length).toBe(9);
+	const r = rules.find((x) => x.id === "instruction-not-predicate");
+	expect(r).toBeDefined();
+	// HT-BUG-6: the meta-correction drops off act
+	const meta = scoreSignals("Now I must " + SHORT + " (no, that is the banned phrase). Let me EXECUTE.", r!.lexicon);
+	const metaC = confidence(meta.pos, meta.neg);
+	console.log(`  rule_precision HT-BUG-6: pos=${meta.pos} neg=${meta.neg} band=${bandOfLexicon(metaC, r!.band)}`);
+	expect(bandOfLexicon(metaC, r!.band)).not.toBe("act");
+	// HT-BUG-5: the process hedge drops off act
+	const hedge = scoreSignals(LONG + " about the doc-density gate: these are .md writes.", r!.lexicon);
+	const hedgeC = confidence(hedge.pos, hedge.neg);
+	console.log(`  rule_precision HT-BUG-5: pos=${hedge.pos} neg=${hedge.neg} band=${bandOfLexicon(hedgeC, r!.band)}`);
+	expect(bandOfLexicon(hedgeC, r!.band)).not.toBe("act");
+	// THE NEGATIVE HALF: a DESIGN instruction still fires act
+	const design = scoreSignals("let me just add a check that validates the input", r!.lexicon);
+	const designC = confidence(design.pos, design.neg);
+	console.log(`  rule_precision the design instruction: pos=${design.pos} band=${bandOfLexicon(designC, r!.band)}`);
+	expect(bandOfLexicon(designC, r!.band)).toBe("act");
+	// THE SACRED OVERLAP: a genuine predicate statement is still clear
+	const sacred = scoreSignals("the predicate throws a nonzero exit", r!.lexicon);
+	console.log(`  rule_precision the sacred overlap: pos=${sacred.pos} neg=${sacred.neg} band=${bandOfLexicon(confidence(sacred.pos, sacred.neg), r!.band)}`);
+	expect(sacred.pos).toBe(0);
+	expect(sacred.neg).toBeGreaterThanOrEqual(4);
 });
