@@ -1,7 +1,10 @@
 node_modules/
 bun.lock
+<<<<<<< HEAD
 wt-engine/
 wt-surfaces/
 *.log
 dist/
 .ct/
+=======
+>>>>>>> worker/engine
