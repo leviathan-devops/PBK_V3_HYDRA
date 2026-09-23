@@ -204,9 +204,15 @@ THE FIX (HT-BUG-10, proven from disk):
     BLOCKED (OCR_NO_FILES_REVIEWED (filesReviewed=?) - the gate CANNOT claim PASS on an
              unreviewed run)
 
-★ A SECOND, DEEPER BLOCKER: the SCAN itself produces NO ARTIFACT (filesReviewed=?, 0 findings).
-  The gate's fix correctly refuses to pass it — but no real audit can be produced until the ocr
-  scan writes a proper artifact.
+★ A SECOND, DEEPER BLOCKER — MEASURED BY RUNNING THE COMMAND DIRECTLY:
+  the ocr scan is RATE-LIMITED. The raw output:
+    [ocr] scan plan failed: POST openrouter.ai ... 429 Too Many Requests
+          "poolside/laguna-s-2.1:free is temporarily rate-limited upstream"
+    Error: scan failed: all 1 file scan(s) failed
+  A retry 90 s later returned the SAME 429; `ocr session list` reads FILES 0 / COMMENTS 0.
+  ★ THIS IS A PROVIDER-QUOTA BLOCK (the class HT-BUG-7 belongs to). NO CODE FIX PRODUCES AN AUDIT
+    FROM A RATE-LIMITED LANE. The gate's fix CORRECTLY refuses to pass it — the gate is BLOCKED
+    with the retry condition, and a BLOCKED gate is NEVER upgraded to PASS.
 
 THE RETRY CONDITION: (1) a NEW omp process (the code is ESM-cached), AND (2) a working ocr scan
   that writes an artifact with files_reviewed > 0. Until BOTH hold the gate is BLOCKED and every

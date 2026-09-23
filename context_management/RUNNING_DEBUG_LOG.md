@@ -486,3 +486,29 @@ Append-only. Every debug event lands HERE the moment it is understood. Never edi
 - LESSON: **a count from a pattern-matched runner is not a count of the tree.** The number was
   never a regression — it was never 63. A copy inside the repo inflates every aggregate.
 - EVIDENCE: `grep -c '^test('` per file (9+8+7) vs the pattern-matched total (63).
+
+
+## [2026-09-23T15:20:00+04:00] — THE AUDIT GATE'S SECOND BLOCKER: THE SCAN IS RATE-LIMITED (429)
+
+- SYMPTOM: the audit gate's fix (HT-BUG-10) is on disk, but no real audit can be produced — the
+  scan writes `files_reviewed=0, comments=0` (or no artifact).
+- ROOT CAUSE (measured by running the ocr command DIRECTLY):
+  ```
+  ocr scan --format json --path src/lexicon/score.ts
+  [ocr] scan plan failed: POST "https://openrouter.ai/api/v1/chat/completions":
+        429 Too Many Requests  {"raw":"poolside/laguna-s-2.1:free is temporarily rate-limited
+        upstream. Please retry shortly, or add your own key ..."}
+  [ocr] Scan subtask error ... LLM completion error: 429
+  Error: scan failed: all 1 file scan(s) failed — check your LLM configuration and API key
+  ```
+  A RETRY 90 s later returned the SAME 429. `ocr session list` confirms: the recent scans read
+  `FILES 0 · COMMENTS 0`.
+- FIX: NONE AVAILABLE IN THIS SESSION. This is a PROVIDER QUOTA BLOCK (the same class as HT-BUG-7's
+  Jev 402). The pin's law applies: a quota-dead chain -> BLOCKED with the retry condition, NEVER
+  upgraded to PASS.
+- LESSON: **the audit gate has TWO independent blockers, and BOTH are outside the code:**
+  (1) its fix needs a new omp process (ESM-cached);
+  (2) the ocr scan needs a non-rate-limited provider lane.
+  A gate that is correctly BLOCKED is a PASS for the GATE (it refused) and a FAIL for the BUILD
+  (no audit). The two must not be confused.
+- EVIDENCE: the raw 429 body (twice, 90 s apart); `ocr session list` -> FILES 0.
