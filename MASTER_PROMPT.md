@@ -7,8 +7,25 @@ The depth document. The PIN (<=200 lines) points here. A fresh session reads THI
 ## §1 · WHAT THIS IS
 
 Build PBK v3 — a deterministic enforcement pipeline — using the hydra-workers topology. TWO
-workers, each owning ONE git worktree, building in PARALLEL against a FROZEN SEAM. The product
-does not exist yet: both `wt-engine/src/` and `wt-surfaces/src/` are EMPTY.
+workers, each owning ONE git worktree, building in PARALLEL against a FROZEN SEAM.
+
+★ THE PRODUCT NOW EXISTS AND IS GREEN. The two workers built; the orchestrator MERGED them.
+THE OPERABLE TARGET IS THE REPO ROOT, not the worktrees:
+
+```
+the merged tree     /home/leviathan/JARVIS_WORKSPACE/OMP/PBK_V3_HYDRA
+  src/              15 .ts — the engine + the surfaces + the merged entry
+  vendor/abide/     16 .ts (the vendored engine)
+  tests/            the suite
+  SEAM/seam.ts      the FROZEN contract
+the acceptance commands (run FROM THE REPO ROOT):
+  bunx tsc --noEmit        -> exit 0
+  bun test tests/          -> 40 pass 0 fail
+  the 8 named selectors    -> lexicon_sweep · lint_runner · lexicon_load_throws · source_kind_gate
+                              · quote_state · abort_dedupe · action_map · delta_accumulator
+```
+The worktrees (`wt-engine/`, `wt-surfaces/`) still exist and their branches are intact — they are
+the HISTORY of the build, not the runnable target.
 
 **The mission in one sentence:** make `check(req: CheckRequest): Promise<Decision>` exist in
 `wt-engine` and make it REACHABLE on the OMP host from `wt-surfaces`, then merge the halves and
@@ -17,7 +34,7 @@ prove the enforcement fires on a live session.
 ## §2 · THE FROZEN CONTRACT (the only shared surface)
 
 ```
-SEAM/seam.ts              192 L · sha256 66b66a7f10c7c6e7... · `bunx tsc --noEmit` exit 0
+SEAM/seam.ts              192 L · sha256 66b66a7f10c7c6e737a491b6e0f639039fcad6698224b9512b5be74493f7381d · `bunx tsc --noEmit` exit 0
                            FROZEN — neither worker edits it; the merge gate checks its sha
 
 THE 12 EXPORTS
@@ -46,7 +63,7 @@ THE WEIGHTS (seam.ts:71-77) — THE ONLY PLACE A SCORE IS DEFINED
 ## §3 · THE TWO WORKERS (the topology, committed)
 
 ```
-master           a8f088e   the worker-plan + the merge gate + the canon + the ship docs
+master           343dbb7   THE MERGED TREE (the engine + the surfaces in ONE src/)
 worker/engine    9049e83   W1: WORKER_SPEC.md 333 L · WORKER_GOAL.md 57 L · TODOS.md 12 rows
 worker/surfaces  df915cd   W2: WORKER_SPEC.md 343 L · WORKER_GOAL.md 60 L · TODOS.md 13 rows
 
@@ -89,8 +106,11 @@ OR-13 the payload carries it          the harness prints the payload        PEND
 OR-14 the combined tree checks        bunx tsc --noEmit (both halves)       PENDING
 OR-15 the ledger records the decider  grep -c decidedBy -> >= 1             PENDING
 
-★ FIVE ✓ AND TEN PENDING IS THE MEASURE OF THE BUILD. Every ✓ describes a PRE-STATE;
-  every PENDING requires the product to exist.
+★ ALL 15 CARRY A VALUE NOW (the merge moved the 10 PENDING).
+  OR-6 the engine's purity EMPTY · OR-7 the surfaces' purity EMPTY · OR-8 F1=1.000
+  OR-9 the lint REFUSED · OR-10 the gate suppresses · OR-11 the interrupt ABORTS
+  OR-12 the negatives silent · OR-13 the payload carries it · OR-14 the combined tsc exit 0
+  OR-15 the ledger records decidedBy. Measured at master 343dbb7.
 ```
 
 ## §5 · THE MIGRATION VOCABULARY (the measured three-way divergence)

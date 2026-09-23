@@ -295,3 +295,41 @@ Append-only. Every work unit lands HERE the moment it happens.
   the surfaces' purity (bandOf|confidence in surfaces/action/gate) -> EMPTY
   ```
 - NEXT: P5 the migration, P6 the runtime seat.
+
+
+## [2026-09-23T12:40:00+04:00] — P6/P7/P8: THE SEAT, THE SWEEP, THE SECOND OPERATOR, THE AUDIT
+
+- WHAT: (1) the runtime seat driven; (2) the adversarial sweep against the known defects;
+  (3) the SECOND-OPERATOR test (a zero-context agent); (4) the audit gate re-run; (5) the docs
+  sweep + the MASTER_PROMPT repair.
+- EVIDENCE (every command, its output):
+  ```
+  P6 · THE SEAT
+    the instance:    pid 13888, started 2026-09-23 11:25:04
+    the bundle:      index.ts mtime 06:08:08 · sha 1122308d41ba11a8 · 221 L
+    ★ THE DEPLOYED-IS-NOT-SOURCE: the process started AFTER the edit -> THE FIX IS LIVE
+    ★ THE A/B (the pedigree fix, VERIFIED):
+        the OLD channel (user-role messages): the LAST at session line 31948
+        the NEW channel (customType "ttsr-injection"): the lexicon-gate firings at lines 32034/32039
+        30 custom entries carry the type; 64 user-role messages predate the switch
+    the ledger:      335 rows · instruction-not-predicate 106 · theatrical-verification 103 ·
+                     dist-not-built 54 · scope-shrink 33 · record-anchor 19 (+ TS-family rules)
+    the exemptor:    228 own_utterance / 107 quotation = 32% suppressed
+    the Jev path:    335/335 jev:null — the NAMED 402 holds
+  P7 · THE ADVERSARIAL SWEEP (tests/adversarial.test.ts, 6 pass / 0 fail)
+    HT-BUG-3 the inflection gap    pos=4 neg=0 c=0.800 act   (OPEN)
+    HT-BUG-4 the double-match      short pos=2 c=0.667 · long pos=4 c=0.800 (OPEN)
+    HT-BUG-5 the narration fire    the real span pos=4 act   (OPEN)
+    HT-BUG-6 the self-reference    the meta-correction pos=2 act (OPEN)
+    HT-BUG-10 the blind pass       the gate said 0; the artifact says 10 (OPEN)
+    ★ FOUR PROBE ERRORS, all Side A — incl. TEMPLATE-LITERAL ESCAPING (\b became a BACKSPACE)
+  P8 · THE SECOND OPERATOR (a zero-context scout)
+    the verdict: NOT SUFFICIENT — three gaps: the doc named the EMPTY worktrees, not the merged
+    root; it presented the pre-merge state as current; the seam sha was truncated.
+    ★ FIXED: MASTER_PROMPT.md now names the root, the acceptance commands, and the full sha.
+  P8 · THE AUDIT GATE
+    the health: ✓ · the scan: GATE: PASS (0 critical/high) · filesReviewed=? · findings=0
+    ★ NO ARTIFACT WAS WRITTEN. The instrument-validity control REFUTES the pass: I know the tree
+      carries FOUR open defects. HT-BUG-10 REPRODUCED. → AUDIT GATE: BLOCKED (never a pass).
+  ```
+- NEXT: P9 the checkpoint, then the verdict.

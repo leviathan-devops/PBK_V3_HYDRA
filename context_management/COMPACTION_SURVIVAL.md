@@ -2,18 +2,25 @@
 
 Overwrite semantics for the state block; the operating laws section is kept verbatim.
 
-## STATE AT A GLANCE (read this first after a compaction)
+## STATE AT A GLANCE (re-measured 2026-09-23T12:30)
 
 ```
-THE PROJECT   /home/leviathan/JARVIS_WORKSPACE/OMP/PBK_V3_HYDRA  (its own git repo)
-THE TOPOLOGY  2 workers · 2 worktrees · 2 branches · the frozen seam between them
-  master          26fa25a   the worker-plan + the merge gate + the pre-push deny
-  worker/engine   9049e83   W1's anchors (spec 333 L · pin 57 L · todos 16 L)
-  worker/surfaces df915cd   W2's anchors (spec 343 L · pin 60 L · todos 17 L)
-THE SEAM      SEAM/seam.ts · 192 L · sha 66b66a7f10c7c6e7 · tsc exit 0 · FROZEN
-THE BUILD     wt-engine/src/ 0 entries · wt-surfaces/src/ 0 entries  -> UNBUILT
-THE LIVE ENF. ~/.omp/agent/extensions/lexicon-gate (689 L, 5/5 green) · 9 rules · 56 ledger rows
-THE NEXT ACT  N-1: re-mint both CREATE_PROMPTs against the worker topology (they still say "wave")
+THE PROJECT   /home/leviathan/JARVIS_WORKSPACE/OMP/PBK_V3_HYDRA
+★ THE PRODUCT EXISTS NOW (it did not at the last write of this doc).
+
+master          343dbb7   the MERGED tree — the engine + the surfaces in ONE src/
+  src/          15 .ts: lexicon/{score,load} · engine/check · lint/runner · ledger/writer
+                  · gate/{source-kind,quote} · surfaces/{entry,prose,tool,result,post,stream}
+                  · action/dispatch · index.ts (the merged entry)
+  vendor/abide/ 16 .ts, 1296 L (the vendored engine)
+THE SEAM        SEAM/seam.ts · 192 L · sha 66b66a7f10c7c6e7 · FROZEN, unchanged all build
+THE GATE        bunx tsc --noEmit -> exit 0
+                bun test tests/ -> 40 pass 0 fail
+                the 8 named selectors -> all PASS
+THE LIVE ENF.   ~/.omp/agent/extensions/lexicon-gate (689 L) · 335 ledger rows
+                ★ the pedigree fix is LIVE (the A/B: user-role ends L31948; customType from L32034)
+THE WORKTREES   wt-engine (worker/engine) · wt-surfaces (worker/surfaces) — both merged, kept
+THE NEXT ACT    P8 the docs · P9 the checkpoint · the operator-gated deploy of the NEW tree
 ```
 
 ## THE OPERATING LAWS (verbatim — these do not decay)

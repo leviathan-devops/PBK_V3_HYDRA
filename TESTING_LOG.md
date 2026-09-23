@@ -184,7 +184,24 @@ GATE: FAIL — DO NOT MERGE
 # THE AUDIT GATE (STEP 4B — the mandatory input)
 
 ```
-AUDIT GATE: BLOCKED (PROVIDER_QUOTA_EXHAUSTED + OCR_JSON_ABSENT)
+AUDIT GATE: BLOCKED (REPRODUCED — the gate PASSES while writing NO ARTIFACT)
+
+THE SECOND ATTEMPT (2026-09-23T12:35), on the MERGED tree:
+  the health probe:  ✓ Connection test successful (the lane is UP)
+  the scan:          GATE: PASS (0 critical/high) · scope=workspace · filesReviewed=? · findings=0
+  THE ARTIFACT:      NONE. No sg-ocr-*.json was written. The newest artifact predates the run.
+
+★ THE INSTRUMENT-VALIDITY CONTROL REFUTES THE PASS: I KNOW this tree carries FOUR OPEN defects
+  (HT-BUG-3 the inflection gap · HT-BUG-4 the double-match · HT-BUG-5 the narration fire ·
+  HT-BUG-6 the self-reference loop) — measured by my own probe with numbers matching the live
+  ledger (0.667 / 0.800). A gate reporting 0 findings on a KNOWN-DEFECT corpus is a RED FLAG
+  about the INSTRUMENT, not a clean bill.
+★ HT-BUG-10 IS REPRODUCED: the gate reports PASS while (a) filesReviewed is unresolved (`?`)
+  and (b) NO artifact exists. The gate cannot distinguish "reviewed, found nothing" from
+  "reviewed NOTHING".
+
+THE RETRY CONDITION: the scan path must fail LOUD when filesReviewed is unresolved or no
+artifact is written. Until then the gate is BLOCKED and every ship-ready claim is WITHHELD.
 
 THE RUNS (verbatim)
   1  action=scan  -> `GATE: PASS (0 critical/high)`  scope=workspace  filesReviewed=?  findings=0

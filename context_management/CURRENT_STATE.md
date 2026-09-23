@@ -2,21 +2,25 @@
 
 The truth as of 2026-09-23T05:10+04:00. Overwrite semantics — stale content is REMOVED.
 
-## THE ONE-SENTENCE STATE (re-measured 2026-09-23T09:45)
+## THE ONE-SENTENCE STATE (re-measured 2026-09-23T12:30)
 
 ```
-THE FIRST LIVE WORKER RUN HAPPENED. It produced 2 of 14 deliverables, then BOTH workers were
-blocked by the GI graph gate (HT-BUG-13) and infra-cut.
+★ THE PRODUCT NOW EXISTS. The merge landed; the combined tree is green.
 
-wt-engine    HEAD 4845795   D1 the vendored abide (16 .ts, 1296 L) + D2 the lexicon check type
-                            (the discriminatedUnion wired to 5 members; bunx tsc --noEmit exit 0)
-wt-surfaces  HEAD 02d5c49   D1 the source-kind gate (ported verbatim; SCORABLE = own_utterance
-                            only; SrcKind from the frozen seam; 0 band math; 0 stubs)
-master       a8f088e…4af8570…  the topology + the canon + the ship docs + the checkpoint
+master       343dbb7   the MERGED tree: the engine + the surfaces in ONE src/
+the src      15 .ts files — the engine (lexicon/engine/lint/ledger) + the surfaces
+                     (gate/surfaces/action) + the merged entry (src/index.ts)
+the vendor   16 .ts, 1296 L (the vendored abide)
+the gate     bunx tsc --noEmit -> exit 0 · bun test tests/ -> 40 pass 0 fail
+the oracles  15 of 15 carry a value (10 moved from PENDING at the merge)
+the seam     66b66a7f10c7c6e7 (unchanged across the whole build)
 
-REMAINING: W1's D3-D7 · W2's D2-D7 · the merge · the migration · the live round.
-THE BLOCKER: the graph gate refuses structural edits on a greenfield tree with an unsatisfiable
-  remedy (HT-BUG-13, 3 defects, one of them a FALSE documented remedy).
+THE RUNTIME (the live extension, NOT the new tree)
+  the pedigree fix is LIVE — verified by the A/B in the session JSONL:
+    the old channel (user-role) ends at line 31948; the new (customType "ttsr-injection")
+    starts at line 32034.
+  the ledger: 335 rows · the exemptor suppresses 32% (228 own_utterance / 107 quotation)
+  the Jev path: BLOCKED (402) — 335/335 rows carry jev:null, a NAMED failure
 ```
 
 ## THE TOPOLOGY (committed, verified)
