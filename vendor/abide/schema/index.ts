@@ -20,6 +20,7 @@ export {
   modelCheckSchema,
   deferredCheckSchema,
   unenforceableCheckSchema,
+  lexiconCheckSchema,
   checkSchema,
   calibrationSchema,
   calibrationVerdictSchema,

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { RULE_ID_PATTERN } from "./ids.js";
+import { lexiconCheckSchema } from "../lexicon.js";
 
 export const RUBRIC_VERSION = 1;
 
@@ -107,6 +108,7 @@ export const checkSchema = z.discriminatedUnion("type", [
   modelCheckSchema,
   deferredCheckSchema,
   unenforceableCheckSchema,
+  lexiconCheckSchema,
 ]);
 export type Check = z.infer<typeof checkSchema>;
 export type CheckType = Check["type"];
