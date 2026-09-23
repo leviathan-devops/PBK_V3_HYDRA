@@ -16,7 +16,7 @@ CORE FUNCTIONAL (RUNTIME):   0%  (0 of 7 core components driven in a REAL runtim
   the container rig is AVAILABLE (docker · omp-ct:master) — it has NEVER BEEN USED for this tree
 
 SILENT CLASS: 2 capabilities can return a plausible-nothing (the audit CONFIRMED both)
-RE-PROBE:     IN FLIGHT (a zero-context seat)
+RE-PROBE:     3/3 reproduced · NOT TAMPERED
 ```
 
 **THE TWO AXES (never averaged):**
@@ -160,12 +160,22 @@ S-2  C-6 THE DISPATCH — THE UNCONDITIONAL REPAIR
 
 ---
 
-## §8 · THE RE-PROBE (the tamper check)
+## §8 · THE RE-PROBE (the tamper check) — ★ NOT TAMPERED
 
 ```
-STATUS: IN FLIGHT — a zero-context seat re-runs a BLIND SAMPLE (P1 + P3 + P7, one WORKS-heavy,
-        one gate, one deploy), given the probes + the expected results, NEVER the results above.
-★ A mismatch on any probe = TAMPERED -> the measurement FAILS.
+A zero-context seat (blind to the results above) re-ran a BLIND SAMPLE: P1 + P3 + P7.
+ITS RAW OUTPUT (verbatim):
+  PROBE-1 pos=2 neg=0 confidence=0.667 hit="be careful" bandOfLexicon_type=function
+  PROBE-3 table=false · rule_source=false · doc=false · quotation=false · own_utterance=true
+          · rule_source=false · SCORABLE=[own_utterance]
+  PROBE-7 count=7 hooks=session_start,input,message_update,ttsr_triggered,tool_call,
+          tool_result,agent_end
+
+★ THE COMPARISON:
+  PROBE-1  mine: pos=2 neg=0 c=0.667   theirs: pos=2 neg=0 c=0.667   -> MATCH
+  PROBE-3  mine: only plain scorable   theirs: only plain scorable    -> MATCH
+  PROBE-7  mine: 7 hooks               theirs: 7 hooks, same names    -> MATCH
+★ VERDICT: 3/3 reproduced · NOT TAMPERED. The measurement is REAL.
 ```
 
 ---
