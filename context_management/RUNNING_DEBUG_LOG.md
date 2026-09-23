@@ -464,3 +464,25 @@ Append-only. Every debug event lands HERE the moment it is understood. Never edi
   corruption: the instrument, not the code.)
 - EVIDENCE: the controlled write-readback (the marker survived); the brace-matched extraction
   (91 lines) vs the truncated regex (a partial function).
+
+
+## [2026-09-23T15:00:00+04:00] — THE TEST COUNT WAS INFLATED BY COPIES (a measurement defect)
+
+- SYMPTOM: the suite was reported as "63 pass / 0 fail" (and 64 after the new test). After the
+  W5 cleanup removed the worktrees, the SAME command reported "47 pass", which read like a
+  regression.
+- ROOT CAUSE: **`bun test`'s positional arguments are SUBSTRING PATTERNS, not file paths.** The
+  pattern `tests/engine.test.ts` matched BOTH `./tests/engine.test.ts` AND
+  `./Checkpoints/.../tests/engine.test.ts` — every run counted the Checkpoints copies AND the
+  worktree copies. THE HONEST COUNT:
+  ```
+  bun test ./tests/engine.test.ts     -> 9 pass
+  bun test ./tests/surfaces.test.ts   -> 8 pass
+  bun test ./tests/adversarial.test.ts -> 7 pass
+  THE TREE'S OWN SUITE = 24 tests / 0 fail
+  ```
+- FIX: measure with an EXPLICIT `./` path prefix per file, or count `^test(` declarations.
+  The tree's own suite is 24 tests, not 63.
+- LESSON: **a count from a pattern-matched runner is not a count of the tree.** The number was
+  never a regression — it was never 63. A copy inside the repo inflates every aggregate.
+- EVIDENCE: `grep -c '^test('` per file (9+8+7) vs the pattern-matched total (63).
