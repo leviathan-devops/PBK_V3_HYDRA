@@ -321,3 +321,31 @@ Side B (a real contract violation?): YES, TWO:
 ★ BOTH ARE CONFIRMED Side-B defects, recorded. Neither is a probe error.
 ```
 
+---
+
+## THE AUDIT LANE PINNED TO muse-GO (2026-09-23T17:35) — the lane is VIABLE again
+
+**THE OPERATOR'S RULING:** *"use this for ocr. pin it"* → `ocr config set provider muse-go`.
+
+**THE DEFECT FOUND + FIXED (HT-BUG-19):**
+```
+RAN  ocr scan --path src --concurrency 1  (on the pinned muse-go lane)
+     -> 6/6 LLM calls FAILED, verbatim:
+        POST "http://127.0.0.1:4097/zen/go/v1/chat/completions": 503 Service Unavailable
+        {"type":"server_error","message":"Upstream request failed: Endpoint is unavailable"}
+ROOT CAUSE  the muse-go ocr provider carried `protocol: openai` -> ocr POSTed to
+     /chat/completions. muse is RESPONSES-NATIVE; the gateway 503s on chat/completions.
+FIX  ocr config set custom_providers.muse-go.protocol openai-responses   (the sanctioned CLI)
+VERIFIED  the re-run made **0 503s / 0 429s** (was 6/6 failing) and ran REAL agentic review:
+     16 llm_response · 0 llm_error · 10 tool_calls (code_search + file_read) · 14 code_comment
+     mentions across 4 of 15 src/ files (still running).
+```
+
+**THE COMPOUND FINDING:** the audited lanes were QUOTA-DEAD (openrouter-laguna-s-free 429
+`free-models-per-min`; poolside paid 429 `usage limit exceeded`). The muse-GO lane carries the
+go-key cycler + the 8-key pool → the NON-rate-limited route. **HT-BUG-19 was the only thing
+between the pin and a working audit gate.**
+
+**THE AUDIT GATE'S STATE NOW:** the LANE is viable (proven by the live run). The gate reads
+`BLOCKED` only until the scan COMPLETES and writes its artifact. The resume condition narrows
+from "a non-rate-limited lane" (RESOLVED) to "the scan finishing + its artifact landing".
