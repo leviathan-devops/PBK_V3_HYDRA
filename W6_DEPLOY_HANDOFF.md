@@ -28,7 +28,11 @@ the new tree's entry src/index.ts · 58 L · sha16 aa8d1d3d5f2160c5
 ```
 1  the source      /home/leviathan/JARVIS_WORKSPACE/OMP/PBK_V3_HYDRA/src/   (15 .ts)
 2  the target      ~/.omp/agent/extensions/pbk-v3/     (a NEW dir — do NOT overwrite lexicon-gate/)
-3  the entry       src/index.ts exports `boot(pi, { rulesDir })` — the one-call wire
+3  the entry       src/index.ts has `export default function pbk_v3(pi)` — THE DEPLOY CONTRACT
+                   (HT-BUG-15, fixed). omp calls the DEFAULT EXPORT with `pi`; it calls boot()
+                   internally. The rules dir comes from PBK_RULES_DIR or ~/.omp/agent/rules.
+                   WITHOUT IT THE DEPLOY LOADS NOTHING — proven: typeof default === "function",
+                   and calling it registers 7 hooks.
 4  the rules       ~/.omp/agent/rules/  (the 9 live rules — W2 already fixed them)
 5  the config      add the new path to ~/.omp/agent/config.yml's `extensions:` list
 6  the restart     a NEW omp process is REQUIRED (extensions load at process construction;
@@ -41,6 +45,7 @@ the new tree's entry src/index.ts · 58 L · sha16 aa8d1d3d5f2160c5
 bunx tsc --noEmit                  exit 0
 bun test ./tests/                  24 pass / 0 fail   (SOURCE scope)
 the entry exports boot()           1
+the DEFAULT EXPORT (the contract)  1  <- HT-BUG-15 fixed + proven (7 hooks register)
 the entry registers the hooks      7 pi.on registrations
 the rules load                     9 of 9
 the audit gate                     BLOCKED (its fix is in source, not live; the scan writes no artifact)
