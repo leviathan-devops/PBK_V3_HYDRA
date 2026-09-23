@@ -9,7 +9,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtempSync, writeFileSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import type { CheckRequest, LexiconRule } from "../../SEAM/seam";
+import type { CheckRequest, LexiconRule } from "../SEAM/seam";
 import { bandOfLexicon, confidence, deriveBand, scoreSignals } from "../src/lexicon/score";
 import { loadRules } from "../src/lexicon/load";
 import { run } from "../src/engine/check";

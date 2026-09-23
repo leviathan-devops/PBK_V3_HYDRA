@@ -11,7 +11,7 @@
  *
  * THE PURITY INVARIANT (T-5): this file imports NO host surface — no host context
  */
-import type { CheckRequest, CheckResult, Decision, LexiconRule } from "../../../SEAM/seam";
+import type { CheckRequest, CheckResult, Decision, LexiconRule } from "../../SEAM/seam";
 import { bandOfLexicon, confidence, scoreSignals, toDecision } from "../lexicon/score";
 
 export interface RunDeps {

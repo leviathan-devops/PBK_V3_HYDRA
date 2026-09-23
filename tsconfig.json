@@ -9,18 +9,11 @@
     "types": [
       "node",
       "bun"
-    ],
-    "allowImportingTsExtensions": true
+    ]
   },
   "include": [
     "SEAM/**/*.ts",
     "src/**/*.ts",
-<<<<<<< HEAD
-    "tests/**/*.ts",
-    "wt-engine/src/**/*.ts",
-    "wt-surfaces/src/**/*.ts"
-=======
     "tests/**/*.ts"
->>>>>>> worker/engine
   ]
 }

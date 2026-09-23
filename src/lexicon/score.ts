@@ -11,7 +11,7 @@
  */
 import { bandFor } from "../../vendor/abide/band.js";
 import type { Thresholds } from "../../vendor/abide/schema/index.js";
-import type { Band, Decision, PatternFamily, SrcKind } from "../../../SEAM/seam";
+import type { Band, Decision, PatternFamily, SrcKind } from "../../SEAM/seam";
 
 /** Compile one pattern. `\b` presence flips a suggestive hit from +1 to +2 (the seam's rule). */
 function compile(p: string): RegExp {

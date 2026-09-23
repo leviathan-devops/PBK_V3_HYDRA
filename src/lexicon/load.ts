@@ -8,7 +8,7 @@
  */
 import { readdirSync, readFileSync, existsSync } from "node:fs";
 import path from "node:path";
-import type { LexiconRule, PatternFamily, RuleStatus } from "../../../SEAM/seam";
+import type { LexiconRule, PatternFamily, RuleStatus } from "../../SEAM/seam";
 
 export interface RawRule {
 	id: string;

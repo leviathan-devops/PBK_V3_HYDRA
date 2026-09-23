@@ -6,7 +6,7 @@
  */
 import { appendFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
-import type { SrcKind } from "../../../SEAM/seam";
+import type { SrcKind } from "../../SEAM/seam";
 
 export interface LedgerRow {
 	Pattern: string;
