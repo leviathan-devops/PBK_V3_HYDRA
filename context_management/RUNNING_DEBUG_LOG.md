@@ -388,3 +388,33 @@ Append-only. Every debug event lands HERE the moment it is understood. Never edi
   is right. Never `add -A` mid-merge; resolve, then add the specific paths.
 - EVIDENCE: `git show --stat 335c22c` -> `Merge: 2299086 926c910`; the final merge commit
   35aae25 with the combined tree green.
+
+
+## [2026-09-23T12:20:00+04:00] — FOUR PROBE ERRORS IN THE ADVERSARIAL SWEEP (all Side A)
+
+- SYMPTOM: the P7 probe (tests/adversarial.test.ts) failed 2 of 6 tests, then 5 of 6, then
+  passed after four successive corrections. EACH failure was adjudicated BOTH ways before any
+  verdict.
+- ROOT CAUSE — FOUR DISTINCT PROBE ERRORS, none a code defect:
+  1. AN IMPOSSIBLE SHAPE: the probe asserted "Let me start with X" MUST fire. Measured: the
+     rule's suggestive[0] is `(...|let me) (just )?(make sure|ensure|remember to|be careful|
+     always|never)` — "start" is NOT in the group, so it correctly does not fire. MY EXPECTATION
+     was wrong. (The REAL measured span, "let me be careful about the doc-density gate",
+     DOES fire: pos=4, act.)
+  2. A DOUBLED ALTERNATION: I built the pattern as `be (more )?` + "be careful" -> `be (more )?
+     be careful`, which cannot match. The real member is `\b(be (more )?careful|...)\b` — the
+     literal text after `be (more )?` is `careful`, NOT "be careful".
+  3. A MIS-SUBSTITUTED GROUP: the same class, in the first synthesized attempt.
+  4. ★ THE ROOT ERROR — TEMPLATE-LITERAL ESCAPING: I emitted the patterns through a JS template
+     literal, where `\b` became a BACKSPACE character (0x08), not a regex word boundary. The
+     patterns silently never matched. FIX: emit them with `JSON.stringify`, which produces a
+     proper JS string literal with the backslashes intact.
+- FIX: read the rule file's patterns and emit them VERBATIM via JSON.stringify. Result: 6 pass /
+  0 fail, and every defect reproduced with numbers matching the live ledger EXACTLY
+  (0.667 short / 0.800 long / 4 inflected / the meta-correction fires).
+- LESSON: **COPY THE AUTHORITY; NEVER RE-DERIVE IT — and serialize it with a real serializer.**
+  Four drafts hand-built the regexes and each introduced a different, invisible error. The
+  probe-contract discipline (adjudicate Side A before Side B) caught all four: without it, I
+  would have reported FOUR FALSE DEFECTS against code that was correct.
+- EVIDENCE: the four failure transcripts; the final run 6 pass / 0 fail; the numbers
+  (0.667/0.800) matching the live ledger's 171 rows at 0.667 and 27 at 0.800.

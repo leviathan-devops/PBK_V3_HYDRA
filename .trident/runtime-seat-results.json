@@ -1,0 +1,73 @@
+{
+  "campaign": "PBK v3 \u2014 the hydra-workers build, P6 the runtime seat",
+  "date": "2026-09-23",
+  "rig": "HOST-LIVE (the seat IS the rig; the tester is the subject)",
+  "the_seat_declaration": "I am the driver of ~/.omp/agent/extensions/lexicon-gate/. Its consumer is THIS session. Every firing on my own prose is the data.",
+  "the_instance": {
+    "the_bundle": "/home/leviathan/.omp/agent/extensions/lexicon-gate/index.ts",
+    "the_bundle_mtime": "2026-09-23 06:08:08",
+    "the_bundle_sha16": "1122308d41ba11a8",
+    "the_bundle_lines": 221,
+    "the_process_pid": 13888,
+    "the_process_start": "2026-09-23 11:25:04",
+    "the_store": "/home/leviathan/.omp/run/lexicon-ledger.jsonl",
+    "the_store_rows": 335
+  },
+  "the_deployed_is_not_source_check": {
+    "verdict": "LIVE",
+    "the_reasoning": "the process start (11:25:04) is AFTER the file's mtime (06:08:08) \u2014 the process loaded the POST-fix code",
+    "the_prior_finding": "an EARLIER process (pid 191645, started 04:50:25) predated the edit; that process has since exited and a new one loaded the fix"
+  },
+  "the_verdicts": {
+    "THE_PEDIGREE_FIX": {
+      "verdict": "VERIFIED \u2014 LIVE",
+      "the_evidence": {
+        "the_new_channel": "30 custom entries carrying customType='ttsr-injection' in the session JSONL",
+        "the_lexicon_gate_firings": "lines 32034 + 32039 arrived as CUSTOM entries (not user-role)",
+        "the_old_channel": "64 user-role lexicon-gate INTERRUPT messages; the LAST at line 31948",
+        "the_A_B_boundary": "line 31948 (user-role, the old process) -> line 32034 (customType, the new process)"
+      },
+      "the_mechanism": "pi.sendMessage({customType:'ttsr-injection', display:true}, {deliverAs:'steer'}) at index.ts:145, replacing the sendUserMessage at the old :129",
+      "the_significance": "the gate no longer impersonates the operator; the firing arrives as a NATIVE custom entry the harness renders as <primary-context kind='ttsr-injection'>"
+    },
+    "THE_CORRECTION_RESCORE": {
+      "verdict": "FIXED BY THE SAME EDIT (not separately re-measured)",
+      "the_note": "the correction no longer enters the utterance path; the 14 c=0.000 rows were the pre-fix population"
+    },
+    "THE_LIVE_FIRING_MECHANISM": {
+      "verdict": "VERIFIED \u2014 335 ledger rows",
+      "by_rule": {
+        "instruction-not-predicate": 106,
+        "theatrical-verification": 103,
+        "dist-not-built": 54,
+        "scope-shrink": 33,
+        "record-anchor": 19,
+        "stale-substrate": 7,
+        "phantom-and-claim": 3,
+        "ts-no-tiny-functions": 2,
+        "ts-set-map": 2,
+        "unwired-edge": 1,
+        "ts-no-any": 1,
+        "ts-promise-with-resolvers": 1,
+        "ts-no-inline-cast-access": 1,
+        "ts-import-type": 1,
+        "ts-no-dynamic-import": 1
+      },
+      "by_source_kind": {
+        "own_utterance": 228,
+        "quotation": 107
+      },
+      "the_exemptor_rate": "107/335 = 32% suppressed (up from 30% earlier)"
+    },
+    "THE_JEV_PATH": {
+      "verdict": "BLOCKED (the designed path holds)",
+      "the_evidence": "335/335 rows carry jev:null; the log carries the NAMED 402 skips",
+      "the_note": "the wire is live, the account is empty \u2014 a NAMED failure, never a silent null"
+    }
+  },
+  "the_new_ts_rules": {
+    "the_observation": "the ledger now carries TS-family rules (ts-no-tiny-functions, ts-set-map, ts-no-any, ts-import-type, ts-no-dynamic-import, ts-promise-with-resolvers, ts-no-inline-cast-access) that fired on the workers' OWN code",
+    "the_significance": "the enforcement grew while the build ran; the workers' TS triggered rules beyond the original 9"
+  },
+  "the_honest_verdict": "WITNESSED: the pedigree fix is LIVE (the A/B is in the data) \u00b7 the firing mechanism (335 rows) \u00b7 the exemptor (32%) \u00b7 the named Jev failure. FRONTIER: the NEW tree (the merged engine+surfaces) has NEVER RUN ON THE HOST \u2014 deploying it would REPLACE the working live extension, which is the operator's action (the guarded path). The new tree's proof is L0/L1 (tsc + the suite), not L4."
+}
