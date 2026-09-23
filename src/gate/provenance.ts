@@ -34,6 +34,11 @@ import type { SrcKind } from "../../SEAM/seam";
  * MEASURED RECALL: run `bun test -t provenance_recall` (see tests/adversarial.test.ts).
  */
 export const GATE_VOCABULARY: readonly string[] = [
+	// ★ STRONG SIGNALS ONLY. A generic noun ("the gate", "the rule", "lexicon") is ORDINARY
+	// PROSE — the audit (2026-09-23, muse-go) MEASURED that those suppress real violations and
+	// false-positive on normal engineering text. The vocabulary carries only tokens that are
+	// UNAMBIGUOUSLY the gate's: its rule ids, its law names, its engine symbols.
+	//
 	// the rule ids (the gate's own names)
 	"instruction-not-predicate",
 	"theatrical-verification",
@@ -51,18 +56,14 @@ export const GATE_VOCABULARY: readonly string[] = [
 	"SUBJECT LAW",
 	"ARTIFACT LAW",
 	"THE EXIT TEST",
-	// the gate machinery (the engine + the ledger)
+	// the gate machinery (symbols that only exist in the gate)
 	"lexicon-gate",
-	"lexicon",
-	"the gate",
-	"the rule",
-	"the band",
-	"the ledger",
 	"scoreSignals",
 	"classifySource",
+	"classifyProvenance",
+	"PROVENANCE_GATE_ABOUT_SELF",
 	"SCORABLE",
 	"source_kind",
-	"sourceKind",
 ];
 
 /** ★ THE NAMED ERROR TOKEN (frozen, greppable, testable — a sentence would not be). */
@@ -94,18 +95,26 @@ export function isActionable(v: ProvenanceVerdict): boolean {
  * The axis only ADDS the about-gate determination ON TOP of `own_utterance`.
  */
 export function classifyProvenance(line: string, srcKind: SrcKind, _inFence = false): ProvenanceVerdict {
+	const text = typeof line === "string" ? line : "";
 	const refs: string[] = [];
 	for (const term of GATE_VOCABULARY) {
-		if (line.includes(term)) refs.push(term);
+		// ★ WORD-BOUNDARY + CASE-INSENSITIVE: "the rule" must not match inside another word,
+		// and "PREDICATE law" must match "predicate law". The audit MEASURED both failure modes
+		// (false positives from bare `includes`, false negatives from case sensitivity).
+		const rx = new RegExp(`\\b${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
+		if (rx.test(text)) refs.push(term);
 	}
 	const aboutGate = refs.length >= 1;
 	// the axis only re-classes an otherwise-actionable span
 	const effective: SrcKind = aboutGate && srcKind === "own_utterance" ? "rule_source" : srcKind;
+	// ★ THE ERROR IS GATED ON AN ACTUAL RECLASSIFICATION: an already-non-scorable line must not
+	// emit the token spuriously (the audit found this).
+	const reclassified = aboutGate && srcKind === "own_utterance";
 	return {
 		srcKind: effective,
 		aboutGate,
 		gateRefCount: refs.length,
 		gateRefs: refs,
-		error: aboutGate ? PROVENANCE_GATE_ABOUT_SELF : null,
+		error: reclassified ? PROVENANCE_GATE_ABOUT_SELF : null,
 	};
 }

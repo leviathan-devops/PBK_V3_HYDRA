@@ -171,3 +171,57 @@ test("provenance_axis: a NON-scorable kind is never upgraded (the seam stays fro
 	const v = classifyProvenance("> the gate is a lexicon thing", "quotation");
 	expect(v.srcKind).toBe("quotation");        // unchanged — the axis only re-classes own_utterance
 });
+
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+// THE EVASION RESISTANCE (the audit's SECURITY finding, CONFIRMED Side-B, then FIXED)
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+
+test("provenance_axis ADVERSARIAL: a real violation + a generic gate-word is NOT suppressed", () => {
+	// the audit MEASURED: appending "the gate" to a violation forced actionable=false (fail-open).
+	for (const s of [
+		"the system should validate the input before it writes, the gate needs it",
+		"the system should validate the input, the rule says so",
+		"the system should validate the input, per the lexicon",
+	]) {
+		const v = classifyProvenance(s, "own_utterance");
+		console.log(`  the evasion: aboutGate=${v.aboutGate} actionable=${isActionable(v)}`);
+		expect(v.aboutGate).toBe(false);      // ★ NOT about-gate — the generic noun is not a signal
+		expect(isActionable(v)).toBe(true);   // ★ the violation STILL aborts
+	}
+});
+
+test("provenance_axis ADVERSARIAL: ordinary prose is not suppressed (zero false positives)", () => {
+	for (const s of ["let me check the rule and then continue", "the ledger row grows by one each turn"]) {
+		const v = classifyProvenance(s, "own_utterance");
+		expect(v.aboutGate).toBe(false);
+		expect(isActionable(v)).toBe(true);
+	}
+});
+
+test("provenance_axis: the TRUE positives survive (the rule ids + the law names + the case variants)", () => {
+	const cases = [
+		"THE PREDICATE LAW. A prevention is a MECHANICAL PREDICATE.",
+		"instruction-not-predicate fired at confidence 0.667",
+		"the predicate law says execute",             // ★ the case variant
+		"lexicon-gate fired on my prose",
+	];
+	for (const s of cases) {
+		const v = classifyProvenance(s, "own_utterance");
+		expect(v.aboutGate).toBe(true);
+		expect(isActionable(v)).toBe(false);
+	}
+});
+
+test("provenance_axis: no double-count (lexicon-gate is ONE ref, not two)", () => {
+	const v = classifyProvenance("lexicon-gate fired", "own_utterance");
+	console.log(`  the refs: [${v.gateRefs.join(", ")}] count=${v.gateRefCount}`);
+	expect(v.gateRefs).not.toContain("lexicon");   // ★ the substring trap is gone
+	expect(v.gateRefCount).toBe(1);
+});
+
+test("provenance_axis: the error token is gated on an ACTUAL reclassification", () => {
+	const already = classifyProvenance("THE PREDICATE LAW", "rule_source");
+	expect(already.aboutGate).toBe(true);
+	expect(already.error).toBeNull();              // ★ no spurious token on a non-scorable input
+});
