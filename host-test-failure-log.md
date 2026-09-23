@@ -396,3 +396,25 @@ bugs discovered:  12
 
 NEXT AVAILABLE ID: HT-BUG-13
 ```
+
+## HT-BUG-16 · THE DEPLOY HANDOFF CARRIED A STALE ARTIFACT HASH
+
+**WHAT:** `W6_DEPLOY_HANDOFF.md` — the operator's deploy instructions — stated the entry as
+`src/index.ts · 58 L · sha16 aa8d1d3d5f2160c5`.
+
+**ROOT CAUSE:** `aa8d1d3d5f2160c5` is the PRE-HT-BUG-15 hash — the 58 L entry WITHOUT the
+default export (the artifact that loads NOTHING). The handoff was written at 56c55e2 and the
+entry's hash was NOT re-measured after the HT-BUG-15 fix landed.
+MEASURED: `git show 552cb18:src/index.ts | sha256sum` = `6e3b6215d0b2175f` (74 L).
+
+**WHY IT MATTERS:** a stale hash in a DEPLOY handoff is a false-success vector, not a cosmetic
+doc error. The operator either (a) blocks a correct deploy (verifies, sees a mismatch) or
+(b) deploys the PRE-FIX artifact that loads nothing — the exact HT-BUG-15 failure.
+
+**FIX:** corrected to `74 L · sha16 6e3b6215d0b2175f` + a correction note naming the old value.
+ALSO: the "the entry registers the hooks 7 pi.on registrations" claim pointed at src/index.ts;
+the 7 calls live at `src/surfaces/entry.ts:35-99` (MEASURED: calling the default export with a
+stub pi returns 7 handlers).
+
+**THE LESSON:** a handoff's sha must be RE-MEASURED at write time, not carried from the commit
+that motivated it. The artifact moves; the doc does not.
