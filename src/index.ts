@@ -16,6 +16,7 @@
 import type { CheckRequest, CheckResult, LexiconRule } from "../SEAM/seam";
 import { run, type RunDeps } from "./engine/check";
 import { loadRules } from "./lexicon/load";
+import { llmJudge } from "./engine/judge";
 import { install, type EntryDeps } from "./surfaces/entry";
 
 // ── THE ENGINE SURFACE (W1's D7) ──
@@ -53,7 +54,11 @@ export { isQuotedMatch, openRegionsAt } from "./gate/quote";
  * It builds the engine from a rules dir and installs the hooks that call it.
  */
 export function boot(pi: any, opts: { rulesDir: string; logger?: EntryDeps["logger"] }): void {
-	const check = engineFromRulesDir(opts.rulesDir);
+	// ★ THE JUDGE, WIRED (2026-09-24 — the operator: "WHERE IS THE DECISION MAKING MODEL"):
+	// the gray zone now reaches a real decision model (the muse-on-GO lane). Before this,
+	// boot() passed NO judge and every ledger row recorded `jev:null — no judge wired`.
+	// A judge failure is LOUD (the throw is caught by the engine; the mechanical band stands).
+	const check = engineFromRulesDir(opts.rulesDir, { judge: llmJudge });
 	install(pi, { check, logger: opts.logger });
 }
 
