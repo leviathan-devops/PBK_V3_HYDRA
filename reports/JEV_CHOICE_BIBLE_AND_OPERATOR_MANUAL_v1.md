@@ -2996,7 +2996,13 @@ HOLE 3 · THE 255-NODE PIPELINE IS DESIGNED, NOT BUILT. §6.8's five steps have 
 · the two graphs' schemas (semantica vs arsumbris) → PROPOSED, not measured
 · the judge's concrete implementation (KEV wiring) → the next build item
 · the host integration (the tool_call hook) → the next build item
+★ THE COMPLETE BOUNDARY IS §44.2 (8 items) — the three drill holes above are its FIRST THREE.
 ```
 
 **★ THE MANUAL IS OPERABLE FOR THE BUILT MACHINE (the gate + the ticket + the lifecycle gates)
-and HONEST about the three unbuilt items. The drill's holes ARE the forward work order.**
+and HONEST about the unbuilt remainder. The drill's holes ARE the forward work order.**
+
+---
+
+**★ THE DOCUMENT ENDS HERE. PART I (§1-§44) is WHAT IS TRUE; PART II (§M1-§M12) is HOW TO ACT.
+The boundary is §44.2. The forward work order is §M12's three holes, which are §44.2's first three.**
