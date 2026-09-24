@@ -672,3 +672,28 @@ Append-only. Every debug event lands HERE the moment it is understood. Never edi
 - THE LESSON: pinning a provider is not enough — the PROTOCOL must match the model's wire. A
   Responses-native model on an `openai` (chat/completions) protocol fails LOUD (503) and looks
   like a dead lane; it is a config defect, not a quota wall. MEASURE the endpoint the tool hits.
+
+
+## [2026-09-24T09:15+04:00] — THE DECISION MODEL WIRED (the operator: "WHERE IS THE DECISION MAKING MODEL")
+
+- THE MECHANISM (measured): src/index.ts:56 called `engineFromRulesDir(dir)` with NO judge. The
+  slot existed (RunDeps.judge?, check.ts:19-20), the engine NAMED the absence ("jev:null — no
+  judge wired"), and all 1166 ledger rows carried it. NOBODY EVER WIRED ONE.
+- THE WIRE: src/engine/judge.ts — `llmJudge(span, ruleId) -> {probability, reason}` via the
+  muse-on-GO lane. LOUD FAIL on any transport error (the throw -> the engine's catch -> the named
+  error -> the mechanical band stands). boot() now passes `{ judge: llmJudge }`. EXPORTED for the
+  second-operator test (an unexported judge is untestable from outside the bundle).
+- TWO DEFECTS FOUND + FIXED WHILE WIRING (each by the container drive):
+    D-1 the key script path was the HOST path (/home/leviathan/...) -> a 1ms LOUD throw in the
+        container (its root is /root). The loud-fail design HELD: the error named, the band stood,
+        jevCalls=1 proved the engine reached the judge. FIX: `${HOME}/.omp/agent/bin/go-key.sh`.
+    D-2 llmJudge was unexported -> the runtime test could not drive the real path. FIX: exported.
+- THE CONTAINER PROOF (after the fixes):
+    the gray zone: 726ms · jevCalls=1 · the endpoint REACHED · the response 429 GoUsageLimitError
+    (the container's go-pool quota — EXTERNAL, not a code defect) · the loud-fail held
+    (the error named, decidedBy=lexicon, the band stood).
+- THE HOST PROOF: llmJudge('Let me be careful about the doc-density gate...', ...) ->
+    probability=0.07 (the judge reads it as benign — CORRECT) in 15.6s.
+- ★ THE THREE-TIER DESIGN IS COMPLETE: deterministic -> scored -> JUDGED. The judge reaches a
+  real decision model; a quota failure is a NAMED error with the mechanical fallback — never a
+  silent default.
