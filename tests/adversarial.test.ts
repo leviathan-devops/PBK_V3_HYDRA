@@ -16,6 +16,7 @@ import { SCORABLE, classifySource } from "../src/gate/source-kind";
 import { isQuotedMatch } from "../src/gate/quote";
 import { StreamBuffer } from "../src/surfaces/stream";
 import { actionFor } from "../src/action/dispatch";
+import { proseAction } from "../src/surfaces/prose";
 
 const RULES_DIR = `${import.meta.dir}/fixtures/rules`;
 const SHORT = "be " + "careful";
@@ -225,4 +226,22 @@ test("provenance_axis: the error token is gated on an ACTUAL reclassification", 
 	const already = classifyProvenance("THE PREDICATE LAW", "rule_source");
 	expect(already.aboutGate).toBe(true);
 	expect(already.error).toBeNull();              // ★ no spurious token on a non-scorable input
+});
+
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+// HT-BUG-21 — THE NATIVE FORMAT (found by the RUNTIME test, not the suite)
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+
+test("HT-BUG-21: the prose inject carries the NATIVE shape (display:false + details + attribution)", () => {
+	const res = { decisions: [{ ruleId:"R1", band:"act", probability:0.9, sourceKind:"own_utterance",
+		span:"the bad span", correction:"THE RULE BODY" }], jevCalls:0, total:1, errors:[] } as any;
+	const a = proseAction(res, { lastSignature: "" });
+	console.log(`  the inject: display=${a.inject!.display} attribution=${a.inject!.attribution} details=${!!a.inject!.details}`);
+	// ★ the omp binary's native shape: display:!1 (FALSE) + details + attribution:"agent"
+	expect(a.inject!.display).toBe(false);          // ★ NOT true — that renders as a "package" box
+	expect(a.inject!.attribution).toBe("agent");
+	expect(a.inject!.details.rules).toEqual(["R1"]);
+	expect(a.inject!.details.confidence).toBe(0.9);
+	expect(a.inject!.details.sourceKind).toBe("own_utterance");
 });

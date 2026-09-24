@@ -17,7 +17,15 @@ export interface ProseAction {
 	/** The decisions that warrant an abort. */
 	abort: Decision[];
 	/** The correction payload to inject, when one is warranted. */
-	inject: { customType: string; content: string; display: boolean } | null;
+	inject: {
+		customType: string;
+		content: string;
+		/** ★ THE NATIVE SHAPE (measured in the omp binary): display:false — a custom entry with
+		 * display:true renders as a BOX in the TUI. */
+		display: boolean;
+		attribution: string;
+		details: { rules: string[]; confidence: number; sourceKind: string; span: string };
+	} | null;
 }
 
 /** Decide what the prose surface does with a CheckResult. Pure — the caller performs it. */
@@ -38,7 +46,18 @@ export function proseAction(res: CheckResult, opts: { lastSignature?: string } =
 				`lexicon-gate INTERRUPT — rule "${d.ruleId}" fired ` +
 				`(prob ${d.probability.toFixed(3)}, source_kind ${d.sourceKind}).\n` +
 				`The text that fired: "${d.span}"\n\n${d.correction}`,
-			display: true,
+			// ★ THE NATIVE SHAPE (measured in the omp binary 2026-09-23): the harness's OWN TTSR
+			// injections use display:!1 (FALSE) + details + attribution:"agent". `display:true`
+			// renders the custom entry AS A BOX (the "package" the operator reported). The
+			// details carry the machine-readable fields a renderer/inspector expects.
+			display: false,
+			attribution: "agent",
+			details: {
+				rules: [d.ruleId],
+				confidence: Number(d.probability.toFixed(3)),
+				sourceKind: d.sourceKind,
+				span: d.span.slice(0, 200),
+			},
 		},
 	};
 }
