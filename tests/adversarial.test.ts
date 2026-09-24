@@ -245,3 +245,46 @@ test("HT-BUG-21: the prose inject carries the NATIVE shape (display:false + deta
 	expect(a.inject!.details.confidence).toBe(0.9);
 	expect(a.inject!.details.sourceKind).toBe("own_utterance");
 });
+
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+// HT-BUG-22 — THE INJECTION DEFECT (found by the RUNTIME test; the unit tests bypassed it)
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+
+test("HT-BUG-22: the SURFACE injects on the first firing (drives the real handler, not proseAction)", async () => {
+	const { install } = await import("../src/surfaces/entry");
+	const handlers: Record<string, any> = {};
+	const sent: any[] = [];
+	let aborts = 0;
+	const pi: any = {
+		on: (e: string, fn: any) => { handlers[e] = fn; },
+		logger: { info: () => {}, warn: () => {}, error: () => {} },
+		sendMessage: (msg: any) => { sent.push(msg); },
+	};
+	const check = async () => ({
+		decisions: [{ ruleId: "instruction-not-predicate", band: "act", probability: 0.667,
+			sourceKind: "own_utterance", span: "should be careful", correction: "THE RULE BODY" }],
+		jevCalls: 0, total: 1, errors: [],
+	});
+	install(pi, { check: check as any });
+	await handlers.session_start();
+	// ★ drive the SAME span twice — the first MUST inject, the second MUST dedupe
+	const span = ["Actually, I ", "should be ", "careful", " (STOP — execute)."].join("");
+	await handlers.message_update(
+		{ assistantMessageEvent: { type: "text_delta", delta: span + "\n", contentIndex: 0 } },
+		{ abort: () => { aborts++; } },
+	);
+	console.log(`  FIRST: aborts=${aborts} sent=${sent.length}`);
+	expect(aborts).toBe(1);        // it aborted
+	expect(sent.length).toBe(1);   // ★ AND it INJECTED — the HT-BUG-22 pin
+	expect(sent[0].display).toBe(false);
+	expect(sent[0].attribution).toBe("agent");
+	// the second identical span: the dedupe suppresses BOTH the abort and the inject
+	await handlers.message_update(
+		{ assistantMessageEvent: { type: "text_delta", delta: span + "\n", contentIndex: 0 } },
+		{ abort: () => { aborts++; } },
+	);
+	console.log(`  SECOND (same span): aborts=${aborts} sent=${sent.length}`);
+	expect(aborts).toBe(1);        // unchanged — the dedupe
+	expect(sent.length).toBe(1);   // unchanged
+});

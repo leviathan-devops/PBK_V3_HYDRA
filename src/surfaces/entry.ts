@@ -67,7 +67,12 @@ export function install(pi: any, deps: EntryDeps): void {
 			if (!buf.shouldFire(d.ruleId, d.span)) continue; // the dedupe
 			const act = actionFor("prose", d.band);
 			if (act !== "abort") continue;
-			const a = proseAction(res, { lastSignature: `${d.ruleId}:${d.span}` });
+			// ★ HT-BUG-22 (found by the RUNTIME test, 2026-09-24): do NOT pass the CURRENT
+			// signature as lastSignature. proseAction computes `${ruleId}:${span}` ITSELF and
+			// returns { inject: null } when they match — so passing the current value made the
+			// comparison ALWAYS true: the abort fired and the CORRECTION NEVER DID. The model was
+			// stopped with no explanation. THE DEDUPE IS ALREADY DONE above (buf.shouldFire).
+			const a = proseAction(res);
 			ctx?.abort?.();
 			try {
 				if (a.inject) pi.sendMessage(a.inject, { deliverAs: "steer" });
