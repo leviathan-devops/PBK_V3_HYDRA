@@ -17,6 +17,9 @@ import type { CheckRequest, CheckResult, LexiconRule } from "../SEAM/seam";
 import { run, type RunDeps } from "./engine/check";
 import { loadRules } from "./lexicon/load";
 import { llmJudge } from "./engine/judge";
+// ★ EXPORTED for the runtime test + the second operator (a zero-context seat must be able to
+// drive the judge directly — an unexported judge is untestable from outside the bundle).
+export { llmJudge };
 import { install, type EntryDeps } from "./surfaces/entry";
 
 // ── THE ENGINE SURFACE (W1's D7) ──
