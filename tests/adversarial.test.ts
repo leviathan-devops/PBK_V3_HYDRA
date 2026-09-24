@@ -17,6 +17,7 @@ import { isQuotedMatch } from "../src/gate/quote";
 import { StreamBuffer } from "../src/surfaces/stream";
 import { actionFor } from "../src/action/dispatch";
 
+const RULES_DIR = `${import.meta.dir}/fixtures/rules`;
 const SHORT = "be " + "careful";
 const LONG = "let me " + SHORT;
 
@@ -63,7 +64,7 @@ test("P7-HT-BUG-4 the double-match", () => {
 
 test("P7-HT-BUG-5 the process narration (FIXED on the live rule)", () => {
 	// ★ THE AUTHORITY IS THE LIVE RULE, not the local synthetic copy — W2's fix is there.
-	const live = loadRules("/home/leviathan/.omp/agent/rules").find((x) => x.id === "instruction-not-predicate")!;
+	const live = loadRules(RULES_DIR).find((x) => x.id === "instruction-not-predicate")!;
 	const s = scoreSignals(LONG + " about the doc-density gate: these are .md writes.", live.lexicon);
 	const c = confidence(s.pos, s.neg);
 	console.log(`  HT-BUG-5 the real span pos=${s.pos} neg=${s.neg} band=${bandOfLexicon(c, live.band)}`);
@@ -72,7 +73,7 @@ test("P7-HT-BUG-5 the process narration (FIXED on the live rule)", () => {
 });
 
 test("P7-HT-BUG-6 the self-reference loop (FIXED on the live rule)", () => {
-	const live = loadRules("/home/leviathan/.omp/agent/rules").find((x) => x.id === "instruction-not-predicate")!;
+	const live = loadRules(RULES_DIR).find((x) => x.id === "instruction-not-predicate")!;
 	const s = scoreSignals("Now I must " + SHORT + " (no, that is the banned phrase). Let me EXECUTE.", live.lexicon);
 	const c = confidence(s.pos, s.neg);
 	console.log(`  HT-BUG-6 the meta-correction pos=${s.pos} neg=${s.neg} band=${bandOfLexicon(c, live.band)}`);
@@ -111,7 +112,7 @@ test("P7 the FP shield: the positive fires, the negatives do not", () => {
 
 // ── W2's rule_precision: the LIVE rules, read from disk, the exemptors proven ──
 test("rule_precision: the live rules load + the two exemptors hold", () => {
-	const rules = loadRules("/home/leviathan/.omp/agent/rules");
+	const rules = loadRules(RULES_DIR);
 	expect(rules.length).toBe(9);
 	const r = rules.find((x) => x.id === "instruction-not-predicate");
 	expect(r).toBeDefined();

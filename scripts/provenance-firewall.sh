@@ -38,16 +38,20 @@ else
   pass "D3 zero self-correction re-scores"
 fi
 
-# ── D4: THE STALE DEPLOY — the live ext predates the src ────────────────────────
-if [ -f "$LIVE_EXT" ] && [ -f "$ROOT/src/index.ts" ]; then
-  LIVE_T=$(stat -c %Y "$LIVE_EXT"); SRC_T=$(stat -c %Y "$ROOT/src/index.ts")
-  if [ "$LIVE_T" -lt "$SRC_T" ]; then
-    fail "D4 THE STALE DEPLOY: the live ext mtime < the src mtime (DEPLOYED-IS-NOT-SOURCE)"
+# ── D4: THE DEPLOY — is the NEW tree DEPLOYED at its target, and current? ───────
+# ★ FIXED 2026-09-23: the original D4 compared `lexicon-gate` (the OLD tree) to the src. That is
+# the WRONG pair — editing lexicon-gate made its mtime newer and D4 passed SPURIOUSLY. The correct
+# check is the DEPLOY TARGET: ~/.omp/agent/extensions/pbk-v3/index.ts.
+DEPLOY_TARGET="${PBK_DEPLOY_TARGET:-$HOME/.omp/agent/extensions/pbk-v3/index.ts}"
+if [ -f "$DEPLOY_TARGET" ]; then
+  DEPLOY_T=$(stat -c %Y "$DEPLOY_TARGET"); SRC_T=$(stat -c %Y "$ROOT/src/index.ts")
+  if [ "$DEPLOY_T" -lt "$SRC_T" ]; then
+    fail "D4 THE STALE DEPLOY: the deployed pbk-v3 predates the src (DEPLOYED-IS-NOT-SOURCE)"
   else
-    pass "D4 the live ext is not older than the src"
+    pass "D4 the deployed pbk-v3 is not older than the src"
   fi
 else
-  fail "D4 THE STALE DEPLOY: a path is missing ($LIVE_EXT or $ROOT/src/index.ts)"
+  fail "D4 THE DEPLOY ABSENT: no pbk-v3 at $DEPLOY_TARGET (the new tree is NOT deployed)"
 fi
 
 # ── D5: THE TWO-VALUE CONFIDENCE — a label wearing a probability's clothes ──────
