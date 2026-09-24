@@ -13,7 +13,7 @@ into 255 Choice nodes, enforced by Noul, with two Jev scoring tools (accuracy + 
 
 ---
 
-## §1 THE DELIVERED CARDS (2026-09-24, preserved verbatim per the operator order)
+## §0 THE DELIVERED CARDS (2026-09-24, preserved verbatim per the operator order)
 
 ┌────────────────────────────────────────────────────────────────────────────────────┐
 │  ★ THE SUBSTRATE MEASUREMENT (this is the first thing you need to know)             │
