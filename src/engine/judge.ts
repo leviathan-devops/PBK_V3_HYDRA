@@ -19,7 +19,10 @@ const JUDGE_ENDPOINT =
 const JUDGE_MODEL = process.env.PBK_JUDGE_MODEL ?? "muse-spark-1.3-contributor";
 /** The key resolver — NEVER an inline key (the secrets law). */
 const JUDGE_KEY_CMD =
-	process.env.PBK_JUDGE_KEY_CMD ?? "/home/leviathan/.omp/agent/bin/go-key.sh";
+	process.env.PBK_JUDGE_KEY_CMD ??
+		`${process.env.HOME ?? "/root"}/.omp/agent/bin/go-key.sh`;
+// ★ HOME-RELATIVE (2026-09-24): the hardcoded /home/leviathan path THREW in the container
+//   (its root is /root) — a 1ms loud fail, exactly as designed. The env override stays.
 const JUDGE_TIMEOUT_MS = Number(process.env.PBK_JUDGE_TIMEOUT_MS ?? 20_000);
 
 /** Resolve the bearer via the key script; cache per process (the script is cheap but not free). */
