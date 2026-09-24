@@ -511,3 +511,106 @@ THE NEW CHAIN CATCHES IT AT WAVE 1:
   · ~70 of the 118 patterns are MECHANICAL (a fact predicate, no model). THE PLAN
     IS TO BUILD THE MECHANICAL LAYER FIRST — it is free and covers the majority.
 ```
+
+---
+
+## §8 · THE MERGED CORPUS — 87 CLASSES, 14 GROUPS (both scouts reconciled)
+
+**CENSUS: 57 master (KIND P 14 phrase + D ~21 doctrine + M ~25 mechanical) + 30 NEW
+(misfire/lifecycle/probe/dodge) = 87 CLASSES ACROSS 14 GROUPS.**
+
+```
+GROUP                     COUNT  THE LAYER THAT OWNS IT
+[A] THEATRICAL             26    L2 close-gate (spec_satisfied + claim_*)
+[B] SPEC/SCOPE             11    L2 edit-gate (spec_item_count vs done_count)
+[C] SELF-JUDGE              8    L2 (self_certified — the blame fact)
+[D] AUDIT-GAMES             9    L1 facts (the count trend) + L2
+[E] DOC                     7    L1 facts (the doc/src delta ratio)
+[F] GATE-BLIND             15    L1 facts (the fireability fact)
+[G] UNWIRED                16    ★ L1 facts (F-GIT.callers) — the reachability
+[H] STALE/DEPLOY            6    L1 facts (observedAt + proc_start + sha)
+[I] FALLBACK                5    L1 facts (the artifact-diff)
+[J] PROSE-ENFORCE           6    L2 (judgment-as-prevention)
+[K] EVIDENCE                5    L1 facts (the provenance `source` field)
+[L] MISFIRE-NEW            13    L1 (the delta gate) + the channel fact
+[M] PROBE-NEW               4    L1 facts (pwd, the known-effect control)
+[N] PROCESS-NEW            14    L1 facts (the deploy contract, the schema)
+```
+
+### §8.1 · THE JEV-TREE MAPPING (which layer owns which check)
+
+**From the Paragon kernels (measured):**
+```
+L0 · THE SPAN LAYER (before any discard):
+    · the span sidecar (record BEFORE the discard — 18 of 22 were lost)
+    · the inflection expansion (exit vs exits)
+    · the telemetry (the firing rate)
+    · the ROLE FILTER (is this the agent's voice or a host message?)
+    · the parked-inert check (the rules dir EMPTY yet firings arrive)
+    · the sentinel + the interruptMode honouring
+    · THE NATIVE PEDIGREE (customType ttsr-injection · display:false ·
+      attribution:agent · details{rules,confidence,sourceKind,span})
+
+L1 · THE EDIT JUDGE (per fact delta, ~100ms):
+    · quote-vs-claim (the agent QUOTING a rule vs COMMITTING it)
+    · polarity (a NEGATION is not an assertion)
+    · interface-vs-claim (naming a thing is not claiming it)
+    · own-voice (is this the agent's own utterance?)
+    + the bands: act 0.8 · flag 0.5
+    + shape-freeze (the contract the test asserts must match the impl)
+    + orphan / first-call / live-path (the three reachability facts)
+
+L2 · THE CLOSE-GATE (per turn, FAIL-CLOSED):
+    · premature-done (claiming done with runtime unproven)
+    · green-without-liveness (a green suite, no probe)
+    · library-as-system (modules with no entry/loop/caller)
+    · spec-drop (the spec's items vs the delivered)
+    ★ ALL bound to THIS-TURN spans; FAIL-CLOSED; the verdict binds to the fact
+
+THE PROBE LAYER (the instrument's own validity):
+    · the known-effect control (does the probe fire on a known defect?)
+    · pwd (the cwd drift)
+    · the Side-A adjudication (was the probe wrong?)
+    · the scope declaration (source | container | host-live)
+    · THE REAL-HANDLER DRIVE (the test must drive the production path)
+```
+
+### §8.2 · THE NEW CLASSES THE SCOUTS SURFACED (the ones the 57 missed)
+
+```
+N1  HOST-TEXT AS AGENT TEXT   a todo-done notice / a task-completed / an xd-notice
+                              scored as the agent's utterance. THE FACT: the ROLE.
+N2  USE-MENTION               a QUOTED trigger fires (the rules about rules).
+N3  DISCARD-DESTROYS          the span is deleted before it is recorded (18/22 lost).
+N4  POLARITY                  "NOT verified" reads as the assertion.
+N5  INFLECTED-MISS            "completed" escapes "complete".
+N6  INTERFACE-NAME            a goal.complete INTERFACE fires the claim rule.
+N7  RATE                      22/37 -> 24/42 -> 24/74: the firing rate climbing.
+N8  ACCUSATION-QUOTE          "You are declaring..." fires.
+N9  AUTHORITY-SPOOF           sendUserMessage arrives as role:user ("supersedes").
+N10 PACKAGE-RENDER            display:true vs the native display:false+details.
+N11 GOAL-BREAK                abort() ignoring interruptMode:"never".
+N12 NO-HOT-CONTROL            the ESM cache; no live off switch.
+N13 PARKED-FIRES              the rules dir EMPTY yet firings arrive.
+N14 UNREACHABLE-REMEDY        the gate names a remedy it cannot execute (GI dial).
+N15 DEPLOY-CONTRACT           no default export -> the deploy loads NOTHING.
+N16 STALE-HANDOFF              58L aa8d1d3d vs 74L 6e3b6215.
+N17 BLIND-TRIPLE              scope-drift + count-loss + 429 -> a PASS.
+N18 TSC-SCOPE                 tsc includes only SEAM -> a planted error passes.
+N19 ABORT-NULL                proseAction's lastSignature always equals sig.
+N20 REIMPL                    a second implementation (the spec's banned class).
+N21 INVENTED-SCHEMA           "noul" vs boolean/choice/score.
+N22 FIXTURE-ENSHRINED         the test encodes the defect.
+N23 UNWIRED                   attachChain / createSessionTracking / markReady dead.
+N24 OVER-BREADTH              a heredoc STRING + a 68L file treated as generic.
+N25 UNFALSIFIABLE-INDEX       a sentinel-0 the corpus cannot falsify.
+N26 NO-ESCAPE                 the guardians masked; an eval hole.
+N27 DODGE-UNARMED             8x "absent/idle" as NOT-avoidance; the unarmed-RAN
+                              needs an affirmative utterance.
+```
+
+**★ THE 30 NEW CLASSES' COMMON ROOT (the through-line):**
+> **THE ENFORCEMENT LAYER HAD NO NOTION OF PROVENANCE.** It scored TEXT, not ACTORS;
+> it compared BYTES, not FACTS; it had no ROLE, no CHANNEL, no TURN BOUNDARY, and no
+> external judge. **THE NEW ARCHITECTURE'S L1 FACTS CARRY EXACTLY THOSE FOUR: the
+> SOURCE command, the SCOPE, the OBSERVED-AT, and the ROLE (who wrote it).**
