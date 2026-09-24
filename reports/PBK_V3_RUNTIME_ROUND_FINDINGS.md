@@ -84,14 +84,20 @@ exec     -> scoreSignals -> the bands match the host (0.333 flag / 0.667 act / 0
 exec     -> THE DRIVE: aborts=1 injected=1 with the native shape
 ```
 
-## THE SCENARIO STATUS
+## ★★ THE SCENARIO STATUS — THREE OF FOUR RUNTIME-PROVEN
 
 ```
 S1 THE LOAD       the extension LOADS in the container (import-verified) · the 9 rules LOAD
-                  ★ the omp-process registration is UNPROVEN (no "rules loaded" line seen —
-                    the process may not have re-registered, OR pi.logger writes elsewhere)
-S2 THE AXIS FIRES the aboutGate path — NOT yet driven in the container (the next probe)
-S3 A REAL ABORT   ★ PROVEN: aborts=1 + injected=1 with the native shape
-S4 THE EVASION    the source tests pass (the audit's SECURITY fix); the container drive is next
-★ S3 IS RUNTIME-PROVEN. S1 is import-proven, omp-registration unproven. S2/S4 are SOURCE-proven.
+                  ★ the omp-process REGISTRATION is UNPROVEN (no "rules loaded" line observed)
+S2 THE AXIS FIRES ★★ RUNTIME-PROVEN: an about-gate span -> abort=FALSE  (the axis works)
+S3 A REAL ABORT   ★★ RUNTIME-PROVEN: a real violation -> abort=TRUE + injected=1, native shape
+S4 THE EVASION    ★★ RUNTIME-PROVEN: a violation + "the gate" -> abort=TRUE  (the evasion DIES)
+
+THE CONTAINER DRIVE (verbatim):
+  S2 about-gate: abort=false injected=0    <- the axis suppresses its own subject matter
+  S4 evasion:    abort=true  injected=1    <- the audit's SECURITY fix holds in the runtime
+  S2b fenced:    abort=false               <- a fence is rule_source, never scorable
+
+★ S2 + S3 + S4 ARE RUNTIME-PROVEN IN A REAL CONTAINER RUNTIME.
+★ S1 is import-proven; the omp-process registration remains UNPROVEN (named).
 ```

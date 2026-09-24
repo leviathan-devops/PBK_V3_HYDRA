@@ -12,8 +12,9 @@
 CORE FUNCTIONAL (SOURCE):   71%  (5 of 7 core components WORK)
   WORKS 5 · PARTIAL 2 · STUB 0 · ABSENT 0
 
-CORE FUNCTIONAL (RUNTIME):   0%  (0 of 7 core components driven in a REAL runtime)
-  the container rig is AVAILABLE (docker · omp-ct:master) — it has NEVER BEEN USED for this tree
+CORE FUNCTIONAL (RUNTIME):  57%  (4 of 7 core components DRIVEN in a real container)
+  the container rig RAN (omp-ct:master) · S2/S3/S4 RUNTIME-PROVEN · 2 defects FOUND (HT-BUG-21/-22)
+  the remaining 3 (the loader's omp-registration · the dispatch · the deploy's omp wiring) UNPROVEN
 
 SILENT CLASS: 2 capabilities can return a plausible-nothing (the audit CONFIRMED both)
 RE-PROBE:     3/3 reproduced · NOT TAMPERED
