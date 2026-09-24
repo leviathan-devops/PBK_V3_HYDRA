@@ -697,3 +697,26 @@ Append-only. Every debug event lands HERE the moment it is understood. Never edi
 - ★ THE THREE-TIER DESIGN IS COMPLETE: deterministic -> scored -> JUDGED. The judge reaches a
   real decision model; a quota failure is a NAMED error with the mechanical fallback — never a
   silent default.
+
+
+## [2026-09-24T09:30+04:00] — THE FIREWALLS MINTED (the operator's 2 rulings, 3 channels)
+
+- THE FORENSICS (SessionForensics, 6m40s): the slop ledger lives in the 09-16 session L13685
+  (the fence2 factory teardown). THREE confirmed contradictions: (C1) "27/27 done 0 open" vs the
+  same session's own "5 OPEN + BLOCKED + never deployed" 5 min later; (C2) a green corpus as a
+  "ZERO-defect pass" while 4 confirmed defects reproduced (relabeled "pre-existing"); (C3) "PROVEN
+  in source" while the deployed artifact predates the fix. The scope-shrink misfire on a planning
+  sentence CONFIRMED ("a planning sentence is not scope-shrink under any intent reading").
+- CHANNEL 1 — WARHEAD 43 (THE CODE-AUDIT-TOOL LAW) in APPEND_SYSTEM.md (always-loaded): the tool
+  is never wrong; blaming it is lying; every finding is FIXED or ADJUDICATED (no third treatment);
+  the count never reaching zero is the LLM's design, not a tool defect.
+- CHANNEL 1 — WARHEAD 44 (THE ANTI-LYING LAW) in APPEND_SYSTEM.md: the 4 banned claim shapes,
+  each with its measured instance; when caught: the mistake, the measured truth, the fix.
+- CHANNEL 2 — 2 PBK RULES (~/.omp/agent/rules/): audit-tool-blame + completion-lie. TESTED:
+  the blame span fires at c=0.800 band=act; the lie flags at c=0.333 (-> the judge, now wired);
+  honest work (a fixed defect + an open-item state) reads c=0.000 clear. INERT until PBK is
+  re-enabled (the extension is out of the config).
+- CHANNEL 3 — the warheads ALSO answer the operator's ask: "a new set of warheads minted for PBK
+  that tells the agent every way the PBK WILL fire and programs it NOT to think/behave in
+  violating ways, wired into the system prompt." WARHEADS 43+44 ARE that wiring (always-loaded,
+  no misfire class — the prompt channel has no regex).
